@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Dark rounded background -->
+  <rect width="32" height="32" rx="7" fill="#1a1612"/>
+  <!-- Waffle grid: 3×3 cells with amber fill, dark grooves via gaps -->
+  <!-- Row 1 -->
+  <rect x="4"  y="4"  width="7" height="7" rx="1.5" fill="#f59e0b"/>
+  <rect x="12.5" y="4"  width="7" height="7" rx="1.5" fill="#f59e0b"/>
+  <rect x="21" y="4"  width="7" height="7" rx="1.5" fill="#f59e0b"/>
+  <!-- Row 2 -->
+  <rect x="4"  y="12.5" width="7" height="7" rx="1.5" fill="#d97706"/>
+  <rect x="12.5" y="12.5" width="7" height="7" rx="1.5" fill="#f59e0b"/>
+  <rect x="21" y="12.5" width="7" height="7" rx="1.5" fill="#d97706"/>
+  <!-- Row 3 -->
+  <rect x="4"  y="21" width="7" height="7" rx="1.5" fill="#f59e0b"/>
+  <rect x="12.5" y="21" width="7" height="7" rx="1.5" fill="#d97706"/>
+  <rect x="21" y="21" width="7" height="7" rx="1.5" fill="#f59e0b"/>
+</svg>
