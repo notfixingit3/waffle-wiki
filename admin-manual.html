@@ -145,7 +145,7 @@
           <tr><td>Change another admin's role</td><td>✅</td><td>❌</td><td>❌</td></tr>
           <tr><td>Reset another admin's password</td><td>✅</td><td>❌</td><td>❌</td></tr>
           <tr><td>System settings</td><td>✅</td><td>❌</td><td>❌</td></tr>
-          <tr><td>View users registry</td><td>✅</td><td>✅</td><td>✅</td></tr>
+          <tr><td>View users registry (top-level nav)</td><td>✅</td><td>✅</td><td>✅</td></tr>
         </tbody>
       </table>
     </div>
@@ -186,13 +186,24 @@
 
     <!-- ══════════════════════════════════════════════════════ NAVIGATION -->
     <h2 id="navigation">Navigation</h2>
-    <p>The admin top bar contains:</p>
-    <ul>
-      <li><strong>Dashboard</strong> — active and archived waffle list</li>
-      <li><strong>Reports</strong> — analytics (all roles)</li>
-      <li><strong>Admin Tools</strong> dropdown — role-scoped; contains Audit Log, Login History, Users, Admins, Server Settings</li>
-      <li><strong>Your display name</strong> (top-right dropdown) — Settings, My Login History, About, Theme Toggle, Logout</li>
-    </ul>
+    <p>The admin top bar contains the following links, visible based on your role:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nav item</th><th>Visible to</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Dashboard</strong></td><td>All</td><td>Active and archived waffle list</td></tr>
+          <tr><td><strong>New Waffle</strong></td><td>All</td><td>Shortcut to the create waffle form</td></tr>
+          <tr><td><strong>Reports</strong></td><td>All</td><td>Analytics — drought list, power buyers, monthly activity, spot velocity</td></tr>
+          <tr><td><strong>Users</strong></td><td>All</td><td>Buyer Instagram handle registry with search and pagination</td></tr>
+          <tr><td><strong>Admin Tools</strong> dropdown</td><td>admin, super_admin</td><td>Contains: Audit Log (admin+), Admin Users (super_admin only), Server Settings (super_admin only)</td></tr>
+          <tr><td><strong>Your display name</strong> (top-right)</td><td>All</td><td>Profile Settings, My Login History, About, Theme Toggle, Logout</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout info">
+      <div class="callout-title">ℹ️ Login History moved</div>
+      My Login History is now accessed from the display name dropdown → <strong>My Login History</strong>, which links to <code>/admin/settings#login-history</code>. The full admin login history page (admin+ roles) is at <strong>Admin Tools → Login History</strong>.
+    </div>
 
     <h3 id="display-name">How your name appears in the nav</h3>
     <p>The top-right button shows your name using this priority:</p>
@@ -214,7 +225,7 @@
       <li><strong>Archived</strong> — waffles you've archived after completion</li>
     </ul>
 
-    <p>Each waffle card shows: title, price per spot, total spots, status badge (Active / Completed), and counts for available / pending / paid spots. The footer of the nav bar also shows total waffle count and active waffle count.</p>
+    <p>Each waffle card shows: title, price per spot, total spots, status badge (Active / Completed), counts for available / pending / paid spots, a fill progress bar, and an image thumbnail if an <code>image_url</code> is set on the waffle. The nav bar footer also shows total waffle count and active waffle count.</p>
 
     <p>From a waffle card you can click:</p>
     <ul>
@@ -459,12 +470,12 @@
 
     <!-- ══════════════════════════════════════════════════════ ADMIN MANAGEMENT -->
     <hr class="section-rule" />
-    <h2 id="admin-management">Admin Management</h2>
+    <h2 id="admin-management">Admin User Management</h2>
     <p>
       Available to <span class="badge badge-super">super_admin</span> only.
-      Navigate to <strong>Admin Tools → Admins</strong>.
+      Navigate to <strong>Admin Tools → Admin Users</strong>.
       The page shows a table of all admin accounts — active and inactive — with username, email, role, status, and last login.
-      An inline role-permissions summary table is available at the bottom of the page for quick reference.
+      An inline role-permissions guide is shown at the top of the page (collapsed on mobile, always visible on desktop) to help you choose the right role when creating a new admin.
     </p>
 
     <h3 id="create-admin">Creating an Admin</h3>
@@ -639,21 +650,31 @@
 
     <!-- ══════════════════════════════════════════════════════ USERS REGISTRY -->
     <h2 id="users">Users Registry</h2>
-    <p>Navigate to <strong>Admin Tools → Users</strong>. Available to all roles.</p>
+    <p>Navigate to <strong>Users</strong> in the top nav. Available to all roles.</p>
     <p>
       The users registry is a deduplicated list of every Instagram handle that has ever claimed a spot.
       On startup, the app backfills all existing <code>claimed_by_handle</code> values from the spots table into the <code>users</code> table automatically.
-      Every new claim upserts the handle if it isn't already present.
+      Every new spot claim upserts the handle if it isn't already present.
     </p>
 
-    <h4>Search and pagination</h4>
-    <ul>
-      <li>A <strong>search</strong> box filters by Instagram handle (substring match).</li>
-      <li>Results are paginated — 25 per page by default, configurable up to 100 per page via the <code>per_page</code> query param.</li>
-      <li>The page shows total user count and page navigation.</li>
-    </ul>
+    <h3>Columns</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Column</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Instagram Handle</strong></td><td>Clickable link — opens the public buyer stats page at <code>/buyer/:handle</code> showing their full win/loss history.</td></tr>
+          <tr><td><strong>Created At</strong></td><td>When this handle was first seen by the system (first claim, or backfill timestamp).</td></tr>
+          <tr><td><strong>Updated At</strong></td><td>When the record was last touched (e.g. a new claim by the same handle).</td></tr>
+        </tbody>
+      </table>
+    </div>
 
-    <p>Use this page to look up a buyer's first-seen date, or simply to get a count of how many unique buyers have used the platform.</p>
+    <h3>Search and pagination</h3>
+    <ul>
+      <li>A <strong>search</strong> box at the top filters by Instagram handle (substring match). A <em>Clear</em> button appears when a search is active.</li>
+      <li>Results are paginated — 25 per page by default, up to 100 per page via the <code>per_page</code> query param.</li>
+      <li>The pagination footer shows current page, total pages, and total user count.</li>
+    </ul>
 
     <!-- ══════════════════════════════════════════════════════ SETTINGS -->
     <hr class="section-rule" />

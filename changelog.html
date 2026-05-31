@@ -76,6 +76,7 @@
     <div class="sidebar-section">
       <div class="sidebar-section-title">Releases</div>
       <a href="#v0.1.18" class="sidebar-link">v0.1.18</a>
+      <a href="#v0.1.17" class="sidebar-link">v0.1.17</a>
       <a href="#v0.1.16" class="sidebar-link">v0.1.16</a>
       <a href="#v0.1.15" class="sidebar-link">v0.1.15</a>
       <a href="#v0.1.14" class="sidebar-link">v0.1.14</a>
@@ -100,6 +101,27 @@
       <h1>Changelog</h1>
       <p class="subtitle">All notable changes to Project Syrup, newest first.</p>
     </div>
+
+    <!-- v0.1.17 -->
+    <div class="release" id="v0.1.17">
+      <div class="release-header">
+        <h2>v0.1.17</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.17" class="release-tag">v0.1.17</a>
+        <span class="release-date">2026-05-31</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Progress Bars</strong> — DaisyUI fill progress bars on waffle cards (public list, admin dashboard, waffle detail) showing claimed vs total spots at a glance.</li>
+          <li><strong>Image Thumbnails</strong> — Waffle list cards now render an <code>image_url</code> thumbnail when set, with an <code>onerror</code> handler to gracefully hide broken images.</li>
+          <li><strong>Open Graph Meta Tags</strong> — OG tags added to waffle detail and home pages for richer link previews when shared on Instagram or other platforms.</li>
+          <li><strong>Configurable Trusted Proxies</strong> — New <code>TRUSTED_PROXIES</code> environment variable accepts comma-separated CIDRs. Defaults to RFC 1918 ranges if unset or invalid. Ensures real client IPs are captured correctly behind Cloudflare, nginx, or cloud load balancers.</li>
+          <li><strong>Extended Private IP Detection</strong> — WHOIS skip logic now covers IPv6 loopback (<code>::1</code>), link-local (<code>fe80::/10</code>), ULA (<code>fc00::/7</code>), and CGNAT (<code>100.64.0.0/10</code>) in addition to the existing RFC 1918 ranges.</li>
+          <li><strong>Template Functions</strong> — Added <code>mul</code> and <code>div</code> template helper functions used by the new progress bar calculations.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
 
     <!-- v0.1.18 -->
     <div class="release" id="v0.1.18">
