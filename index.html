@@ -3,13 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Project Syrup Wiki — The Waffle Maker</title>
+  <title>Waffle Wiki — Project Syrup</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <header class="topbar">
-  <a href="index.html" class="topbar-logo">🧇 Project Syrup <span>Wiki</span></a>
+  <a href="index.html" class="topbar-logo">
+    <span class="logo-emoji">🧇</span>
+    <div>
+      <span style="display:block">Waffle Wiki</span>
+      <span class="logo-sub">Project Syrup</span>
+    </div>
+  </a>
   <nav class="topbar-nav">
     <a href="index.html" class="active">Home</a>
     <a href="getting-started.html">Getting Started</a>
@@ -26,8 +32,10 @@
       <div class="sidebar-section-title">Overview</div>
       <a href="index.html" class="sidebar-link active">Home</a>
       <a href="index.html#what-is-it" class="sidebar-link sub">What is it?</a>
+      <a href="index.html#project-syrup" class="sidebar-link sub">Project Syrup</a>
       <a href="index.html#how-it-works" class="sidebar-link sub">How it works</a>
       <a href="index.html#tech-stack" class="sidebar-link sub">Tech stack</a>
+      <a href="index.html#project-status" class="sidebar-link sub">Project status</a>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-section-title">Guides</div>
@@ -44,18 +52,33 @@
 
   <main class="content">
     <div class="page-header">
-      <h1>🧇 Project Syrup — The Waffle Maker</h1>
-      <p class="subtitle">A dead-simple live spot board for Instagram waffle drops. Built for collectors, by collectors.</p>
+      <h1>Waffle — The Waffle Maker</h1>
+      <p class="subtitle">Dead-simple, lightning-fast live spot management for Instagram waffle drops.</p>
     </div>
 
     <p>
-      <strong>Project Syrup</strong> is a mobile-first, real-time spot management system for Instagram waffle sellers.
-      No timers. No randomizers. No payment processing. Just a clean board where buyers claim spots and admins track payments.
+      <strong>Waffle</strong> is the production-ready tool in the <a href="https://projectsyrup.app" target="_blank" rel="noopener">Project Syrup</a> family.
+      No timers. No randomizers. No payment processing. Just a clean, real-time board where buyers claim spots and admins track payments — built to run inside Instagram's in-app browser, where your buyers already are.
     </p>
 
-    <p>
-      It is built specifically to work inside Instagram's in-app browser — because that's where your buyers already are.
-    </p>
+    <div class="stats-bar">
+      <div class="stats-bar-item">
+        <span class="stats-bar-value">v0.1.18</span>
+        <span class="stats-bar-label">Latest Release</span>
+      </div>
+      <div class="stats-bar-item">
+        <span class="stats-bar-value">MIT</span>
+        <span class="stats-bar-label">License</span>
+      </div>
+      <div class="stats-bar-item">
+        <span class="stats-bar-value">Go</span>
+        <span class="stats-bar-label">Backend</span>
+      </div>
+      <div class="stats-bar-item">
+        <span class="stats-bar-value">PG 16</span>
+        <span class="stats-bar-label">Database</span>
+      </div>
+    </div>
 
     <div class="card-grid">
       <a href="getting-started.html" class="card">
@@ -76,39 +99,61 @@
       <a href="api-reference.html" class="card">
         <div class="card-icon">📡</div>
         <h3>API Reference</h3>
-        <p>All public and admin API endpoints with descriptions.</p>
+        <p>All public and admin HTTP endpoints with descriptions.</p>
       </a>
     </div>
 
-    <h2 id="what-is-it">What is it?</h2>
+    <h2 id="what-is-it">What is a waffle?</h2>
     <p>
-      A <em>waffle</em> in this context is a raffle-style drop popular on Instagram. A seller creates a listing with a set number of spots at a fixed price. Buyers claim spots by entering their Instagram handle. The seller manually draws a winner after all payments clear.
+      A <em>waffle</em> is a raffle-style drop popular on Instagram. A seller creates a listing with a fixed number of numbered spots at a set price. Buyers claim spots by entering their Instagram handle. The seller collects payments out-of-band (DM, CashApp, Venmo), then draws a winner from the paid spots.
     </p>
     <p>
-      Project Syrup replaces the copy-paste spot lists and frantic DM management that sellers previously did by hand.
+      Waffle replaces the copy-paste spot lists, frantic DM management, and manual tracking that sellers previously did by hand — with a real-time, mobile-first web app that works right inside Instagram's browser.
     </p>
+
+    <h2 id="project-syrup">Project Syrup context</h2>
+    <p>
+      Waffle is one of two apps under the <a href="https://projectsyrup.app" target="_blank" rel="noopener">Project Syrup</a> umbrella:
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>App</th><th>Status</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Waffle</strong> — The Waffle Maker</td>
+            <td><span class="badge badge-wm">Stable</span></td>
+            <td>Production-ready live spot management for Instagram waffle drops. This wiki.</td>
+          </tr>
+          <tr>
+            <td><strong>Wafflerace</strong></td>
+            <td><span class="badge badge-admin">Experimental</span></td>
+            <td>Animated waffle boat race tool for dramatic, high-suspense random selection.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Both apps are open source under MIT and self-hosted via Docker. This wiki covers <strong>Waffle only</strong>.</p>
 
     <h2 id="how-it-works">How it works</h2>
     <ol>
       <li><strong>Admin creates a waffle</strong> — sets title, price per spot, total spots, and links to Instagram posts showing the item.</li>
-      <li><strong>Buyers claim spots</strong> — tap available spots, enter their Instagram handle. Done in under 10 seconds.</li>
-      <li><strong>Admin marks paid</strong> — as payments arrive via DM, CashApp, or Venmo, the admin marks each spot paid.</li>
+      <li><strong>Buyers claim spots</strong> — tap available spots, enter their Instagram handle. Done in under 10 seconds, on mobile, inside the IG app.</li>
+      <li><strong>Admin marks paid</strong> — as payments arrive via DM, CashApp, or Venmo, the admin marks each spot paid from the manage view.</li>
       <li><strong>Winner drawn</strong> — admin enters the winning spot number after an external drawing.</li>
-      <li><strong>Everyone sees results</strong> — a WebSocket broadcast updates all connected clients instantly.</li>
+      <li><strong>Everyone sees results</strong> — a WebSocket broadcast updates all connected clients instantly. No refresh needed.</li>
     </ol>
 
     <h2 id="tech-stack">Tech Stack</h2>
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr><th>Layer</th><th>Technology</th></tr>
-        </thead>
+        <thead><tr><th>Layer</th><th>Technology</th></tr></thead>
         <tbody>
           <tr><td>Frontend</td><td>Go server-side templates + Tailwind CSS + DaisyUI (syrup theme)</td></tr>
           <tr><td>Backend</td><td>Go (Gin framework) + WebSocket hub</td></tr>
-          <tr><td>Database</td><td>PostgreSQL 16 with auto-run migrations</td></tr>
-          <tr><td>DevOps</td><td>Docker Compose, multi-stage builds, GHCR images</td></tr>
-          <tr><td>PWA</td><td>Web App Manifest, service worker, offline support</td></tr>
+          <tr><td>Database</td><td>PostgreSQL 16 with auto-run migrations (pgx driver)</td></tr>
+          <tr><td>DevOps</td><td>Docker Compose, multi-stage builds, GHCR image registry</td></tr>
+          <tr><td>PWA</td><td>Web App Manifest, service worker, offline caching, installable</td></tr>
+          <tr><td>Security</td><td>JWT auth, bcrypt passwords, rate limiting, brute-force lockout, audit log</td></tr>
         </tbody>
       </table>
     </div>
@@ -116,33 +161,35 @@
     <h2 id="project-status">Project Status</h2>
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr><th>Phase</th><th>Status</th><th>Description</th></tr>
-        </thead>
+        <thead><tr><th>Phase</th><th>Status</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td>1–6</td><td>✅ Complete</td><td>Core waffle CRUD, spot claims, WebSocket live updates, admin dashboard, buyer stats, mobile polish</td></tr>
-          <tr><td>7</td><td>✅ Complete</td><td>Multi-admin auth, role-based access, password reset, admin management</td></tr>
-          <tr><td>8</td><td>✅ Complete</td><td>PWA service worker, offline support, installable app shell</td></tr>
-          <tr><td>9</td><td>✅ Complete</td><td>DaisyUI migration — syrup/Halloween theme, amber primary colors</td></tr>
-          <tr><td>10</td><td>✅ Complete</td><td>Production hardening — structured logging, health probes, rate limiting, graceful shutdown</td></tr>
-          <tr><td>11</td><td>✅ Complete</td><td>Security polish — audit log, password policy, login lockout, destructive confirmations</td></tr>
-          <tr><td>12</td><td>✅ Complete</td><td>Bugfix/polish — archived filters, buyer stats recalculation, password reset, accessibility</td></tr>
+          <tr><td>1–6</td><td>✅</td><td>Core waffle CRUD, spot claims, WebSocket live updates, admin dashboard, buyer stats, mobile polish</td></tr>
+          <tr><td>7</td><td>✅</td><td>Multi-admin RBAC (super_admin / admin / waffle_manager), password reset, admin management</td></tr>
+          <tr><td>8</td><td>✅</td><td>PWA service worker, offline caching, installable app shell</td></tr>
+          <tr><td>9</td><td>✅</td><td>DaisyUI migration — syrup/Halloween theme, amber primary palette</td></tr>
+          <tr><td>10</td><td>✅</td><td>Production hardening — structured logging, health probes, rate limiting, graceful shutdown</td></tr>
+          <tr><td>11</td><td>✅</td><td>Security polish — full audit log, bcrypt password policy, login lockout, destructive confirmations</td></tr>
+          <tr><td>12</td><td>✅</td><td>Bugfix release — archived filters, buyer stats recalculation, password reset, accessibility</td></tr>
+          <tr><td>13</td><td>✅</td><td>Users registry with backfill, duplicate lockout fix</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2 id="quick-links">Quick links</h2>
+    <h2>Quick Links</h2>
     <ul>
-      <li><a href="https://github.com/notfixingit3/waffle">GitHub Repository</a></li>
-      <li><a href="https://github.com/notfixingit3/waffle/releases">Releases</a></li>
-      <li><a href="https://github.com/notfixingit3/waffle/pkgs/container/waffle">Docker image on GHCR</a></li>
-      <li><a href="changelog.html">Full Changelog</a></li>
+      <li><a href="https://projectsyrup.app" target="_blank" rel="noopener">projectsyrup.app</a> — Project Syrup home</li>
+      <li><a href="https://github.com/notfixingit3/waffle" target="_blank" rel="noopener">github.com/notfixingit3/waffle</a> — Source code</li>
+      <li><a href="https://github.com/notfixingit3/waffle/releases" target="_blank" rel="noopener">Releases</a> — all version tags</li>
+      <li><a href="https://github.com/notfixingit3/waffle/pkgs/container/waffle" target="_blank" rel="noopener">GHCR image</a> — Docker pulls</li>
+      <li><a href="changelog.html">Changelog</a> — full version history</li>
     </ul>
   </main>
 </div>
 
 <footer>
-  Project Syrup Wiki &mdash; <a href="https://github.com/notfixingit3/waffle">github.com/notfixingit3/waffle</a> &mdash; MIT License
+  Waffle Wiki &mdash; part of <a href="https://projectsyrup.app" target="_blank" rel="noopener">Project Syrup</a> &mdash;
+  <a href="https://github.com/notfixingit3/waffle" target="_blank" rel="noopener">github.com/notfixingit3/waffle</a> &mdash;
+  MIT Licensed. No tracking. No bullshit.
 </footer>
 
 </body>
