@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference — Project Syrup Wiki</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">🧇 Project Syrup <span>Wiki</span></a>
+  <nav class="topbar-nav">
+    <a href="index.html">Home</a>
+    <a href="getting-started.html">Getting Started</a>
+    <a href="admin-manual.html">Admin Manual</a>
+    <a href="deployment.html">Deployment</a>
+    <a href="api-reference.html" class="active">API Reference</a>
+    <a href="changelog.html">Changelog</a>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Public API</div>
+      <a href="#public-pages" class="sidebar-link">Public Pages</a>
+      <a href="#public-waffles" class="sidebar-link">Waffles</a>
+      <a href="#public-spots" class="sidebar-link">Spots &amp; Claims</a>
+      <a href="#public-buyers" class="sidebar-link">Buyers</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Admin API</div>
+      <a href="#admin-auth" class="sidebar-link">Auth</a>
+      <a href="#admin-me" class="sidebar-link">Current Admin</a>
+      <a href="#admin-waffles" class="sidebar-link">Waffles</a>
+      <a href="#admin-spots" class="sidebar-link">Spots</a>
+      <a href="#admin-admins" class="sidebar-link">Admin Management</a>
+      <a href="#admin-reports" class="sidebar-link">Reports</a>
+      <a href="#admin-audit" class="sidebar-link">Audit Log</a>
+      <a href="#admin-login-history" class="sidebar-link">Login History</a>
+      <a href="#admin-users" class="sidebar-link">Users</a>
+      <a href="#admin-settings" class="sidebar-link">Settings</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Other</div>
+      <a href="#websocket" class="sidebar-link">WebSocket</a>
+      <a href="#health" class="sidebar-link">Health &amp; Ready</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="page-header">
+      <h1>API Reference</h1>
+      <p class="subtitle">All HTTP endpoints for the Project Syrup backend.</p>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ Authentication</div>
+      Admin endpoints require a valid JWT in the <code>Authorization: Bearer &lt;token&gt;</code> header,
+      or in the <code>token</code> cookie set by a successful login. Public endpoints require no auth.
+    </div>
+
+    <!-- ══════════════════════════════ PUBLIC PAGES -->
+    <h2 id="public-pages">Public Pages (HTML)</h2>
+    <p>Server-rendered HTML pages returned to browsers.</p>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/</span></div>
+      <div class="endpoint-desc">Home page. Lists active waffles with live spot counts.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/waffles</span></div>
+      <div class="endpoint-desc">Full public waffle list.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/waffle/:slug</span></div>
+      <div class="endpoint-desc">Waffle detail page with live spot grid. This is the URL you share with buyers.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/buyer/:handle</span></div>
+      <div class="endpoint-desc">Public buyer stats page showing win/loss history for an Instagram handle.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/about</span></div>
+      <div class="endpoint-desc">Public about page. Authenticated admins see additional system information.</div>
+    </div>
+
+    <!-- ══════════════════════════════ PUBLIC WAFFLES API -->
+    <h2 id="public-waffles">Public API — Waffles</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/waffles</span></div>
+      <div class="endpoint-desc">List all active (non-archived) waffles. Returns an array of waffle summary objects.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/waffles/:slug</span></div>
+      <div class="endpoint-desc">Get full waffle details by slug, including title, price, total spots, claimed/paid counts, and media links.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/waffles/:slug/export</span></div>
+      <div class="endpoint-desc">Download waffle spot list as CSV. Columns: spot number, status, claimed_by_handle. No auth required.</div>
+    </div>
+
+    <!-- ══════════════════════════════ PUBLIC SPOTS / CLAIMS -->
+    <h2 id="public-spots">Public API — Spots &amp; Claims</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/waffles/:slug/spots</span></div>
+      <div class="endpoint-desc">Get the full spot grid for a waffle. Returns all spots with number, status, and (if claimed) the Instagram handle.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/claims</span></div>
+      <div class="endpoint-desc">
+        Claim one or more spots. Rate-limited.
+        <pre><code>{
+  "waffle_slug": "blue-wig-3",
+  "spot_numbers": [4, 7, 12],
+  "instagram_handle": "dani_boo_glass"
+}</code></pre>
+        Returns the updated spot objects or an error if any spot is already taken.
+        Transactionally safe — no double-claims possible.
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ PUBLIC BUYERS -->
+    <h2 id="public-buyers">Public API — Buyers</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/buyers/:handle/stats</span></div>
+      <div class="endpoint-desc">Win/loss statistics for an Instagram handle. Returns total claims, wins, and losses.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/buyers/:handle/history</span></div>
+      <div class="endpoint-desc">Full claim history for an Instagram handle across all waffles.</div>
+    </div>
+
+    <!-- ══════════════════════════════ ADMIN AUTH -->
+    <h2 id="admin-auth">Admin API — Auth</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/login</span></div>
+      <div class="endpoint-desc">
+        Authenticate and receive a JWT.
+        <pre><code>{ "username": "admin", "password": "syrup" }</code></pre>
+        Returns <code>{ "token": "..." }</code> on success. Sets a secure <code>token</code> cookie.
+        Returns <code>401</code> on bad credentials; <code>429</code> after lockout threshold is exceeded.
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/logout</span></div>
+      <div class="endpoint-desc">Clears the session cookie. No body required.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/forgot-password</span></div>
+      <div class="endpoint-desc">
+        Request a password reset token by username.
+        <pre><code>{ "username": "admin" }</code></pre>
+        Always returns <code>200</code> (does not reveal whether the username exists). A super_admin must retrieve the token and share it with the user out-of-band.
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/reset-password</span></div>
+      <div class="endpoint-desc">
+        Reset password using a token.
+        <pre><code>{ "token": "...", "new_password": "..." }</code></pre>
+        Token is single-use and expires. Password must meet the password policy.
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ ADMIN ME -->
+    <h2 id="admin-me">Admin API — Current Admin</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/me</span></div>
+      <div class="endpoint-desc">Returns the authenticated admin's profile: id, username, role, timezone, profile fields.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-patch">PATCH</span> <span class="endpoint-path">/api/admin/me/timezone</span></div>
+      <div class="endpoint-desc">
+        Update timezone preference.
+        <pre><code>{ "timezone": "America/New_York" }</code></pre>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/change-password</span></div>
+      <div class="endpoint-desc">
+        Change your own password. Requires current password.
+        <pre><code>{ "current_password": "...", "new_password": "..." }</code></pre>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ ADMIN WAFFLES -->
+    <h2 id="admin-waffles">Admin API — Waffles</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/waffles</span></div>
+      <div class="endpoint-desc">
+        List waffles. Query param: <code>?archived=true</code> for archived waffles, <code>?archived=false</code> (default) for active.
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/waffles</span></div>
+      <div class="endpoint-desc">
+        Create a new waffle.
+        <pre><code>{
+  "title": "Blue Wig #3",
+  "price_per_spot": "25.00",
+  "total_spots": 50,
+  "media_links": ["https://www.instagram.com/p/..."]
+}</code></pre>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-patch">PATCH</span> <span class="endpoint-path">/api/admin/waffles/:id</span></div>
+      <div class="endpoint-desc">Update waffle title, price, or media links. Spot count cannot be changed after creation.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/waffles/:id/archive</span></div>
+      <div class="endpoint-desc">Archive a waffle. Requires <span class="badge badge-admin">admin</span> or higher.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/waffles/:id/unarchive</span></div>
+      <div class="endpoint-desc">Restore an archived waffle to active status.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-delete">DELETE</span> <span class="endpoint-path">/api/admin/waffles/:id</span></div>
+      <div class="endpoint-desc">
+        Permanently delete a waffle and all its spots. Requires typing <code>DELETE</code> and providing current password as confirmation.
+        <pre><code>{ "confirmation": "DELETE", "password": "..." }</code></pre>
+        Requires <span class="badge badge-admin">admin</span> or higher. Irreversible.
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/waffles/:id/winner</span></div>
+      <div class="endpoint-desc">
+        Enter the winning spot number.
+        <pre><code>{ "spot_number": 17 }</code></pre>
+        Marks the spot as winner, updates buyer stats for all paid spots.
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/waffles/:id/clear-winner</span></div>
+      <div class="endpoint-desc">Clear the current winner. Resets the winning spot to active; recalculates buyer stats.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/waffles/:id/change-winner</span></div>
+      <div class="endpoint-desc">
+        Reassign the winner to a different spot.
+        <pre><code>{ "spot_number": 23 }</code></pre>
+        Recalculates buyer stats for all affected spots.
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ ADMIN SPOTS -->
+    <h2 id="admin-spots">Admin API — Spots</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/spots/:id/pay</span></div>
+      <div class="endpoint-desc">Mark a pending spot as paid. Broadcasts a WebSocket update to all connected clients.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/spots/:id/release</span></div>
+      <div class="endpoint-desc">Release a pending or paid spot back to available. Broadcasts a WebSocket update.</div>
+    </div>
+
+    <!-- ══════════════════════════════ ADMIN ADMINS -->
+    <h2 id="admin-admins">Admin API — Admin Management</h2>
+    <p>All endpoints in this section require <span class="badge badge-super">super_admin</span> role.</p>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/admins</span></div>
+      <div class="endpoint-desc">List all admin accounts with username, role, and active status.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/admins</span></div>
+      <div class="endpoint-desc">
+        Create a new admin account.
+        <pre><code>{ "username": "jane", "password": "...", "role": "admin" }</code></pre>
+        Valid roles: <code>super_admin</code>, <code>admin</code>, <code>waffle_manager</code>.
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-patch">PATCH</span> <span class="endpoint-path">/api/admin/admins/:id</span></div>
+      <div class="endpoint-desc">
+        Update role. Demotions require current password confirmation.
+        <pre><code>{ "role": "waffle_manager", "current_password": "..." }</code></pre>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-patch">PATCH</span> <span class="endpoint-path">/api/admin/admins/:id/password</span></div>
+      <div class="endpoint-desc">
+        Reset another admin's password. The admin should change it on next login.
+        <pre><code>{ "new_password": "..." }</code></pre>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-delete">DELETE</span> <span class="endpoint-path">/api/admin/admins/:id</span></div>
+      <div class="endpoint-desc">
+        Deactivate an admin account. Requires current password.
+        <pre><code>{ "current_password": "..." }</code></pre>
+        Deactivated admins cannot log in. Their audit history is preserved. They can be reactivated.
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ REPORTS -->
+    <h2 id="admin-reports">Admin API — Reports</h2>
+    <p>Available to all roles.</p>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/reports/drought</span></div>
+      <div class="endpoint-desc">Buyers with the most losses and no recent win, sorted by loss streak.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/reports/power-buyers</span></div>
+      <div class="endpoint-desc">Buyers ranked by total paid spots across all waffles.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/reports/monthly-activity</span></div>
+      <div class="endpoint-desc">Waffles run, spots claimed, and payments received grouped by calendar month.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/reports/spot-velocity</span></div>
+      <div class="endpoint-desc">Time from waffle creation to last spot claimed, per waffle. Shows how quickly your drops sell out.</div>
+    </div>
+
+    <!-- ══════════════════════════════ AUDIT LOG -->
+    <h2 id="admin-audit">Admin API — Audit Log</h2>
+    <p>Requires <span class="badge badge-admin">admin</span> or <span class="badge badge-super">super_admin</span>.</p>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/audit</span></div>
+      <div class="endpoint-desc">
+        List audit log entries with pagination. Query params: <code>?page=1&amp;per_page=50&amp;admin_id=&amp;action=&amp;from=&amp;to=</code>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/audit/:id</span></div>
+      <div class="endpoint-desc">Get a single audit log entry by ID.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/audit/export</span></div>
+      <div class="endpoint-desc">Export filtered audit log entries as CSV. Same filter params as the list endpoint.</div>
+    </div>
+
+    <!-- ══════════════════════════════ LOGIN HISTORY -->
+    <h2 id="admin-login-history">Admin API — Login History</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/login-history</span></div>
+      <div class="endpoint-desc">
+        List login history. Visibility is role-scoped:
+        <ul style="margin-top:6px">
+          <li><span class="badge badge-wm">waffle_manager</span> — own entries only</li>
+          <li><span class="badge badge-admin">admin</span> — own + waffle_manager entries</li>
+          <li><span class="badge badge-super">super_admin</span> — all entries</li>
+        </ul>
+        Optional query param: <code>?admin_id=</code> (super_admin only).
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ USERS -->
+    <h2 id="admin-users">Admin API — Users</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/users</span></div>
+      <div class="endpoint-desc">List all registered buyer handles (the users registry). Returns handle and first-seen timestamp.</div>
+    </div>
+
+    <!-- ══════════════════════════════ SETTINGS -->
+    <h2 id="admin-settings">Admin API — Settings</h2>
+    <p>Requires <span class="badge badge-super">super_admin</span>.</p>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/settings</span></div>
+      <div class="endpoint-desc">Retrieve current system settings (WHOIS server, JWT expiry, retention periods, lockout config).</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-patch">PATCH</span> <span class="endpoint-path">/api/admin/settings</span></div>
+      <div class="endpoint-desc">
+        Update one or more system settings.
+        <pre><code>{
+  "whois_server": "whois.pwhois.org",
+  "jwt_expiry_hours": 24,
+  "audit_log_retention_days": 90,
+  "login_history_retention_days": 90
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ WEBSOCKET -->
+    <h2 id="websocket">WebSocket</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">WS</span> <span class="endpoint-path">/ws/:slug</span></div>
+      <div class="endpoint-desc">
+        Connect to the real-time hub for a waffle. Replace <code>:slug</code> with the waffle slug.
+        The client receives JSON messages whenever a spot changes state.
+      </div>
+    </div>
+
+    <h3>Message format</h3>
+    <pre><code>{
+  "type": "spot_update",
+  "spot": {
+    "id": 42,
+    "number": 7,
+    "status": "paid",
+    "claimed_by_handle": "dani_boo_glass"
+  }
+}</code></pre>
+
+    <h3>Message types</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>type</th><th>Trigger</th></tr></thead>
+        <tbody>
+          <tr><td><code>spot_update</code></td><td>Any spot status change (claim, pay, release, winner)</td></tr>
+          <tr><td><code>winner</code></td><td>Winner entered — includes winning spot and handle</td></tr>
+          <tr><td><code>ping</code></td><td>Server heartbeat (every ~30s) — client should reply <code>pong</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Reconnection</h3>
+    <p>The client-side WebSocket implementation (<code>websocket-client.js</code>) uses exponential backoff with jitter and a maximum retry cap. Stale connections are detected via the server-side ping/pong heartbeat.</p>
+
+    <!-- ══════════════════════════════ HEALTH -->
+    <h2 id="health">Health &amp; Readiness</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/health</span></div>
+      <div class="endpoint-desc">
+        Returns <code>200</code> with <code>{"status":"ok","db":"connected"}</code> when healthy.
+        Returns <code>503</code> if the database is unreachable.
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/ready</span></div>
+      <div class="endpoint-desc">Readiness probe for container orchestrators. Same response format as <code>/health</code>.</div>
+    </div>
+  </main>
+</div>
+
+<footer>
+  Project Syrup Wiki &mdash; <a href="https://github.com/notfixingit3/waffle">github.com/notfixingit3/waffle</a> &mdash; MIT License
+</footer>
+
+</body>
+</html>

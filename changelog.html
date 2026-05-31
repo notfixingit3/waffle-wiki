@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Changelog — Project Syrup Wiki</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .release { margin-bottom: 40px; }
+    .release-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .release-header h2 {
+      margin: 0;
+      border: none;
+      padding: 0;
+      font-size: 1.25rem;
+    }
+    .release-date {
+      color: var(--gray-400);
+      font-size: .85rem;
+    }
+    .release-tag {
+      display: inline-block;
+      background: var(--amber-100);
+      color: var(--amber-800);
+      border: 1px solid var(--amber-300);
+      border-radius: 4px;
+      padding: 1px 8px;
+      font-size: .78rem;
+      font-family: 'SF Mono','Fira Code',monospace;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .release-tag:hover { background: var(--amber-200); }
+    .change-section { margin: 10px 0; }
+    .change-kind {
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: 4px;
+    }
+    .kind-added   { color: #059669; }
+    .kind-fixed   { color: #2563eb; }
+    .kind-changed { color: #d97706; }
+    .kind-removed { color: #dc2626; }
+    .change-list { margin-left: 20px; }
+    .change-list li { font-size: .9rem; margin-bottom: 3px; }
+    .change-list strong { color: var(--gray-700); }
+    .divider { border: none; border-top: 1px solid var(--amber-200); margin: 32px 0; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">🧇 Project Syrup <span>Wiki</span></a>
+  <nav class="topbar-nav">
+    <a href="index.html">Home</a>
+    <a href="getting-started.html">Getting Started</a>
+    <a href="admin-manual.html">Admin Manual</a>
+    <a href="deployment.html">Deployment</a>
+    <a href="api-reference.html">API Reference</a>
+    <a href="changelog.html" class="active">Changelog</a>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Releases</div>
+      <a href="#v0.1.18" class="sidebar-link">v0.1.18</a>
+      <a href="#v0.1.16" class="sidebar-link">v0.1.16</a>
+      <a href="#v0.1.15" class="sidebar-link">v0.1.15</a>
+      <a href="#v0.1.14" class="sidebar-link">v0.1.14</a>
+      <a href="#v0.1.13" class="sidebar-link">v0.1.13</a>
+      <a href="#v0.1.12" class="sidebar-link">v0.1.12</a>
+      <a href="#v0.1.11" class="sidebar-link">v0.1.11</a>
+      <a href="#v0.1.10" class="sidebar-link">v0.1.10</a>
+      <a href="#v0.1.9"  class="sidebar-link">v0.1.9</a>
+      <a href="#v0.1.8"  class="sidebar-link">v0.1.8</a>
+      <a href="#v0.1.7"  class="sidebar-link">v0.1.7</a>
+      <a href="#v0.1.5"  class="sidebar-link">v0.1.5</a>
+      <a href="#v0.1.0"  class="sidebar-link">v0.1.0</a>
+      <a href="#v0.0.9"  class="sidebar-link">v0.0.9</a>
+      <a href="#v0.0.8"  class="sidebar-link">v0.0.8</a>
+      <a href="#v0.0.5"  class="sidebar-link">v0.0.5</a>
+      <a href="#v0.0.1"  class="sidebar-link">v0.0.1</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="page-header">
+      <h1>Changelog</h1>
+      <p class="subtitle">All notable changes to Project Syrup, newest first.</p>
+    </div>
+
+    <!-- v0.1.18 -->
+    <div class="release" id="v0.1.18">
+      <div class="release-header">
+        <h2>v0.1.18</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.18" class="release-tag">v0.1.18</a>
+        <span class="release-date">2026-05-31</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Users Registry</strong> — New <code>users</code> table with <code>GetOrCreateUser</code>, <code>ListUsers</code>, and <code>BackfillUsers</code> service functions, admin users list page and JSON API endpoint.</li>
+          <li><strong>User Backfill</strong> — Automatic backfill of existing <code>claimed_by_handle</code> values from <code>spots</code> table into <code>users</code> table on application startup.</li>
+        </ul>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-fixed">Fixed</div>
+        <ul class="change-list">
+          <li><strong>Duplicate Lockout Removal</strong> — Resolved duplicate Instagram handle lockout preventing claim submissions for handles with existing pending/paid spots.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.16 -->
+    <div class="release" id="v0.1.16">
+      <div class="release-header">
+        <h2>v0.1.16</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.16" class="release-tag">v0.1.16</a>
+        <span class="release-date">2026-05-31</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-changed">Changed</div>
+        <ul class="change-list">
+          <li><strong>Dev/Stable Release Channels</strong> — Docker workflow dev branch trigger, version bump, CHANGELOG backfill, README channels section.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.15 -->
+    <div class="release" id="v0.1.15">
+      <div class="release-header">
+        <h2>v0.1.15</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.15" class="release-tag">v0.1.15</a>
+        <span class="release-date">2026-05-30</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Admin Profile Expansion</strong> — First name, last name, email, and social links fields on admin profile.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.14 -->
+    <div class="release" id="v0.1.14">
+      <div class="release-header">
+        <h2>v0.1.14</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.14" class="release-tag">v0.1.14</a>
+        <span class="release-date">2026-05-30</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-changed">Changed</div>
+        <ul class="change-list">
+          <li><strong>Admin UI Polish</strong> — Password change UI, tooltips, responsive layout fix.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.13 -->
+    <div class="release" id="v0.1.13">
+      <div class="release-header">
+        <h2>v0.1.13</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.13" class="release-tag">v0.1.13</a>
+        <span class="release-date">2026-05-29</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-changed">Changed</div>
+        <ul class="change-list">
+          <li><strong>Admin Nav Grouping</strong> — Grouped admin navigation under Admin Tools dropdown.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.12 -->
+    <div class="release" id="v0.1.12">
+      <div class="release-header">
+        <h2>v0.1.12</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.12" class="release-tag">v0.1.12</a>
+        <span class="release-date">2026-05-29</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Audit Log Nav Prominence</strong> — Moved audit log to top nav, added admin filter, and added server settings tab.</li>
+          <li><strong>Role-Permissions Guide</strong> — Inline role-permissions guide on admin users page.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.11 -->
+    <div class="release" id="v0.1.11">
+      <div class="release-header">
+        <h2>v0.1.11</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.11" class="release-tag">v0.1.11</a>
+        <span class="release-date">2026-05-29</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-fixed">Fixed</div>
+        <ul class="change-list">
+          <li><strong>Archived Waffle Filter</strong> — Admin active and archived waffle lists now show the correct records.</li>
+          <li><strong>Buyer Stats Recalculation</strong> — Clear/change winner actions now refresh buyer win/loss stats.</li>
+          <li><strong>Password Reset API</strong> — Forgot-password JSON response no longer exposes reset tokens.</li>
+          <li><strong>Drought Report Dates</strong> — Missing last-entry dates now render cleanly instead of showing <code>Invalid Date</code>.</li>
+        </ul>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-changed">Changed</div>
+        <ul class="change-list">
+          <li><strong>Admin Code Cleanup</strong> — Removed unused spot/winner handlers and consolidated shared audit/password confirmation helpers.</li>
+          <li><strong>Accessibility Polish</strong> — Claim success/error feedback now announces via <code>aria-live</code>.</li>
+          <li><strong>Audit Export Link</strong> — CSV export filters are URL-encoded.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.10 -->
+    <div class="release" id="v0.1.10">
+      <div class="release-header">
+        <h2>v0.1.10</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.10" class="release-tag">v0.1.10</a>
+        <span class="release-date">2026-05-29</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-fixed">Fixed</div>
+        <ul class="change-list">
+          <li><strong>Admin Login Redirect</strong> — Already-authenticated admins are redirected from login to the dashboard.</li>
+          <li><strong>Public Header/Footer Spacing</strong> — Public header and footer vertical spacing now better matches admin layout density.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.9 -->
+    <div class="release" id="v0.1.9">
+      <div class="release-header">
+        <h2>v0.1.9</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.9" class="release-tag">v0.1.9</a>
+        <span class="release-date">2026-05-29</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>CI Pipeline</strong> — <code>dev</code> branch added to GitHub Actions trigger.</li>
+          <li><strong>Audit Export UI</strong> — CSV export button on admin audit log page with date filter support.</li>
+          <li><strong>WebSocket Heartbeat</strong> — Server-side ping/pong with per-connection mutex, client-side stale detection.</li>
+          <li><strong>Smoke Tests</strong> — Shell script for end-to-end Docker Compose validation.</li>
+          <li><strong>Data Retention</strong> — Configurable audit_log and login_history retention (default 90 days).</li>
+          <li><strong>Release Automation</strong> — GitHub Release auto-created on tag push with CHANGELOG excerpt.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.8 -->
+    <div class="release" id="v0.1.8">
+      <div class="release-header">
+        <h2>v0.1.8</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.8" class="release-tag">v0.1.8</a>
+        <span class="release-date">2026-05-28</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>CI Pipeline</strong> — GitHub Actions workflow with go test, vet, govulncheck, and Docker build checks.</li>
+          <li><strong>Audit Log CSV Export</strong> — New API endpoint to export audit log entries as CSV.</li>
+          <li><strong>WebSocket Reconnect Logic</strong> — Exponential backoff jitter and max retry cap for resilient client reconnection.</li>
+          <li><strong>gosec G104 Triage</strong> — All unhandled error returns reviewed and explicitly handled across the codebase.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.7 -->
+    <div class="release" id="v0.1.7">
+      <div class="release-header">
+        <h2>v0.1.7</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.7" class="release-tag">v0.1.7</a>
+        <span class="release-date">2026-05-27</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Admin Audit Log</strong> — Full audit trail with <code>audit_log</code> table, service layer, JSON API, and admin UI at <code>/admin/audit</code>.</li>
+          <li><strong>Last Login IP Tracking</strong> — Login history records and displays the IP address of each admin session.</li>
+          <li><strong>Brute-Force Lockout</strong> — Rate-limited login endpoints with configurable failed attempt threshold and lockout duration.</li>
+          <li><strong>Configurable JWT Expiration</strong> — System setting to control JWT token lifetime.</li>
+          <li><strong>Password Policy Enforcement</strong> — Server-side validation enforcing minimum length and rejecting common/weak passwords.</li>
+          <li><strong>Destructive Action Confirmation</strong> — Delete, deactivate, and role-demotion operations require current password confirmation.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.5 -->
+    <div class="release" id="v0.1.5">
+      <div class="release-header">
+        <h2>v0.1.5</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.5" class="release-tag">v0.1.5</a>
+        <span class="release-date">2026-05-27</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Login History</strong> — Audit trail tracking admin logins with IP, browser, OS, and device type.</li>
+          <li><strong>WHOIS Enrichment</strong> — Async WHOIS lookups on login to capture org, country, city, and ASN.</li>
+          <li><strong>System Settings</strong> — Configurable WHOIS server, super_admin only.</li>
+          <li><strong>Winner Management</strong> — Admin-only endpoints to clear winner and change winner with buyer stats recalculation.</li>
+          <li><strong>Settings Dropdown</strong> — Consolidated admin nav menu under username.</li>
+          <li><strong>About Page</strong> — Public about page with admin-only system extras section.</li>
+          <li><strong>Login History Pages</strong> — My Login History tab on settings page + full admin login history page with role-based filtering.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.0 -->
+    <div class="release" id="v0.1.0">
+      <div class="release-header">
+        <h2>v0.1.0</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.0" class="release-tag">v0.1.0</a>
+        <span class="release-date">2026-05-26</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Multi-Admin Auth</strong> — Role-based access control with super_admin, admin, and waffle_manager roles.</li>
+          <li><strong>Admin Management</strong> — Create admins, change roles, deactivate accounts, reset passwords (super_admin only).</li>
+          <li><strong>waffle_manager Role</strong> — Create and manage waffles + view reports, without archive/delete/user-management access.</li>
+          <li><strong>Timezone Settings</strong> — Per-admin timezone preference with IANA timezone dropdown.</li>
+          <li><strong>Password Reset</strong> — Self-service reset tokens plus authenticated password changes.</li>
+          <li><strong>Instagram Media Links</strong> — Link to posts showing what's being waffled (supports multiple items).</li>
+          <li><strong>Archive + Delete Controls</strong> — Hide completed waffles by default, or type DELETE for permanent removal.</li>
+        </ul>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-changed">Changed</div>
+        <ul class="change-list">
+          <li>Migrated all UI to DaisyUI with syrup theme and amber primary colors.</li>
+          <li>Redesigned navigation with Inter font and unified brand colors.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.0.9 -->
+    <div class="release" id="v0.0.9">
+      <div class="release-header">
+        <h2>v0.0.9</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.0.9" class="release-tag">v0.0.9</a>
+        <span class="release-date">2026-05-26</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>DaisyUI Migration</strong> — Complete UI overhaul with DaisyUI component library and syrup color theme.</li>
+          <li><strong>Production Deployment</strong> — docker-compose.prod.yml, .env.example, and GHCR image workflow.</li>
+          <li><strong>PWA Service Worker</strong> — Offline caching with service worker registration.</li>
+          <li><strong>Rate Limiting</strong> — Request rate limiting for public endpoints.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.0.8 -->
+    <div class="release" id="v0.0.8">
+      <div class="release-header">
+        <h2>v0.0.8</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.0.8" class="release-tag">v0.0.8</a>
+        <span class="release-date">2026-05-25</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Seed Data</strong> — Demo waffle and admin data for fresh installs.</li>
+          <li><strong>Navigation Redesign</strong> — Cleaner admin nav with role-based visibility.</li>
+          <li><strong>Inter Font</strong> — Modern typography across all pages.</li>
+          <li><strong>Brand Color Unification</strong> — Consistent amber/brown color scheme.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.0.5 -->
+    <div class="release" id="v0.0.5">
+      <div class="release-header">
+        <h2>v0.0.5</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.0.5" class="release-tag">v0.0.5</a>
+        <span class="release-date">2026-05-24</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>PWA Support</strong> — Web App Manifest, app icons, standalone display metadata.</li>
+          <li><strong>Offline Page</strong> — Cached offline.html for when the network is unavailable.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.0.1 -->
+    <div class="release" id="v0.0.1">
+      <div class="release-header">
+        <h2>v0.0.1</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.0.1" class="release-tag">v0.0.1</a>
+        <span class="release-date">2026-05-20</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Initial Public Release</strong> — Project Syrup foundation.</li>
+          <li>Docker Compose setup with PostgreSQL 16.</li>
+          <li>Go backend with Gin framework and server-rendered Tailwind CSS templates.</li>
+          <li>WebSocket hub for real-time spot updates.</li>
+          <li>Basic waffle CRUD operations.</li>
+          <li>Spot claim and payment tracking.</li>
+          <li>Admin authentication system.</li>
+        </ul>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  Project Syrup Wiki &mdash; <a href="https://github.com/notfixingit3/waffle">github.com/notfixingit3/waffle</a> &mdash; MIT License
+</footer>
+
+</body>
+</html>

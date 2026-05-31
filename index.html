@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Syrup Wiki — The Waffle Maker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">🧇 Project Syrup <span>Wiki</span></a>
+  <nav class="topbar-nav">
+    <a href="index.html" class="active">Home</a>
+    <a href="getting-started.html">Getting Started</a>
+    <a href="admin-manual.html">Admin Manual</a>
+    <a href="deployment.html">Deployment</a>
+    <a href="api-reference.html">API Reference</a>
+    <a href="changelog.html">Changelog</a>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Overview</div>
+      <a href="index.html" class="sidebar-link active">Home</a>
+      <a href="index.html#what-is-it" class="sidebar-link sub">What is it?</a>
+      <a href="index.html#how-it-works" class="sidebar-link sub">How it works</a>
+      <a href="index.html#tech-stack" class="sidebar-link sub">Tech stack</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Guides</div>
+      <a href="getting-started.html" class="sidebar-link">Getting Started</a>
+      <a href="admin-manual.html" class="sidebar-link">Admin Manual</a>
+      <a href="deployment.html" class="sidebar-link">Deployment</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Reference</div>
+      <a href="api-reference.html" class="sidebar-link">API Reference</a>
+      <a href="changelog.html" class="sidebar-link">Changelog</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="page-header">
+      <h1>🧇 Project Syrup — The Waffle Maker</h1>
+      <p class="subtitle">A dead-simple live spot board for Instagram waffle drops. Built for collectors, by collectors.</p>
+    </div>
+
+    <p>
+      <strong>Project Syrup</strong> is a mobile-first, real-time spot management system for Instagram waffle sellers.
+      No timers. No randomizers. No payment processing. Just a clean board where buyers claim spots and admins track payments.
+    </p>
+
+    <p>
+      It is built specifically to work inside Instagram's in-app browser — because that's where your buyers already are.
+    </p>
+
+    <div class="card-grid">
+      <a href="getting-started.html" class="card">
+        <div class="card-icon">🚀</div>
+        <h3>Getting Started</h3>
+        <p>Run the app locally in under five minutes with Docker Compose.</p>
+      </a>
+      <a href="admin-manual.html" class="card">
+        <div class="card-icon">🛠️</div>
+        <h3>Admin Manual</h3>
+        <p>Complete guide to running waffles, managing spots, admins, and reports.</p>
+      </a>
+      <a href="deployment.html" class="card">
+        <div class="card-icon">☁️</div>
+        <h3>Deployment</h3>
+        <p>Production setup with Docker Compose, Railway, Render, or Fly.io.</p>
+      </a>
+      <a href="api-reference.html" class="card">
+        <div class="card-icon">📡</div>
+        <h3>API Reference</h3>
+        <p>All public and admin API endpoints with descriptions.</p>
+      </a>
+    </div>
+
+    <h2 id="what-is-it">What is it?</h2>
+    <p>
+      A <em>waffle</em> in this context is a raffle-style drop popular on Instagram. A seller creates a listing with a set number of spots at a fixed price. Buyers claim spots by entering their Instagram handle. The seller manually draws a winner after all payments clear.
+    </p>
+    <p>
+      Project Syrup replaces the copy-paste spot lists and frantic DM management that sellers previously did by hand.
+    </p>
+
+    <h2 id="how-it-works">How it works</h2>
+    <ol>
+      <li><strong>Admin creates a waffle</strong> — sets title, price per spot, total spots, and links to Instagram posts showing the item.</li>
+      <li><strong>Buyers claim spots</strong> — tap available spots, enter their Instagram handle. Done in under 10 seconds.</li>
+      <li><strong>Admin marks paid</strong> — as payments arrive via DM, CashApp, or Venmo, the admin marks each spot paid.</li>
+      <li><strong>Winner drawn</strong> — admin enters the winning spot number after an external drawing.</li>
+      <li><strong>Everyone sees results</strong> — a WebSocket broadcast updates all connected clients instantly.</li>
+    </ol>
+
+    <h2 id="tech-stack">Tech Stack</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Layer</th><th>Technology</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Frontend</td><td>Go server-side templates + Tailwind CSS + DaisyUI (syrup theme)</td></tr>
+          <tr><td>Backend</td><td>Go (Gin framework) + WebSocket hub</td></tr>
+          <tr><td>Database</td><td>PostgreSQL 16 with auto-run migrations</td></tr>
+          <tr><td>DevOps</td><td>Docker Compose, multi-stage builds, GHCR images</td></tr>
+          <tr><td>PWA</td><td>Web App Manifest, service worker, offline support</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="project-status">Project Status</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Phase</th><th>Status</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1–6</td><td>✅ Complete</td><td>Core waffle CRUD, spot claims, WebSocket live updates, admin dashboard, buyer stats, mobile polish</td></tr>
+          <tr><td>7</td><td>✅ Complete</td><td>Multi-admin auth, role-based access, password reset, admin management</td></tr>
+          <tr><td>8</td><td>✅ Complete</td><td>PWA service worker, offline support, installable app shell</td></tr>
+          <tr><td>9</td><td>✅ Complete</td><td>DaisyUI migration — syrup/Halloween theme, amber primary colors</td></tr>
+          <tr><td>10</td><td>✅ Complete</td><td>Production hardening — structured logging, health probes, rate limiting, graceful shutdown</td></tr>
+          <tr><td>11</td><td>✅ Complete</td><td>Security polish — audit log, password policy, login lockout, destructive confirmations</td></tr>
+          <tr><td>12</td><td>✅ Complete</td><td>Bugfix/polish — archived filters, buyer stats recalculation, password reset, accessibility</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="quick-links">Quick links</h2>
+    <ul>
+      <li><a href="https://github.com/notfixingit3/waffle">GitHub Repository</a></li>
+      <li><a href="https://github.com/notfixingit3/waffle/releases">Releases</a></li>
+      <li><a href="https://github.com/notfixingit3/waffle/pkgs/container/waffle">Docker image on GHCR</a></li>
+      <li><a href="changelog.html">Full Changelog</a></li>
+    </ul>
+  </main>
+</div>
+
+<footer>
+  Project Syrup Wiki &mdash; <a href="https://github.com/notfixingit3/waffle">github.com/notfixingit3/waffle</a> &mdash; MIT License
+</footer>
+
+</body>
+</html>

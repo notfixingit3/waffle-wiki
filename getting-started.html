@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started — Project Syrup Wiki</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">🧇 Project Syrup <span>Wiki</span></a>
+  <nav class="topbar-nav">
+    <a href="index.html">Home</a>
+    <a href="getting-started.html" class="active">Getting Started</a>
+    <a href="admin-manual.html">Admin Manual</a>
+    <a href="deployment.html">Deployment</a>
+    <a href="api-reference.html">API Reference</a>
+    <a href="changelog.html">Changelog</a>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Getting Started</div>
+      <a href="#prerequisites" class="sidebar-link">Prerequisites</a>
+      <a href="#local-dev" class="sidebar-link">Local Development</a>
+      <a href="#default-credentials" class="sidebar-link">Default Credentials</a>
+      <a href="#whats-running" class="sidebar-link">What's Running</a>
+      <a href="#first-steps" class="sidebar-link">First Steps</a>
+      <a href="#pwa-install" class="sidebar-link">Install as PWA</a>
+      <a href="#stopping" class="sidebar-link">Stopping the App</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Next Steps</div>
+      <a href="admin-manual.html" class="sidebar-link">Admin Manual</a>
+      <a href="deployment.html" class="sidebar-link">Production Deployment</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="page-header">
+      <h1>Getting Started</h1>
+      <p class="subtitle">Run Project Syrup locally in under five minutes.</p>
+    </div>
+
+    <h2 id="prerequisites">Prerequisites</h2>
+    <p>You only need two things installed on your machine:</p>
+    <ul>
+      <li><strong>Docker</strong> — <a href="https://docs.docker.com/get-docker/">docs.docker.com/get-docker</a></li>
+      <li><strong>Docker Compose</strong> (included with Docker Desktop, or install the <code>docker-compose-plugin</code> separately on Linux)</li>
+    </ul>
+    <p>You do <strong>not</strong> need Go, Node.js, or PostgreSQL installed locally.</p>
+
+    <h2 id="local-dev">Local Development</h2>
+
+    <ol class="steps">
+      <li>
+        <strong>Clone the repository</strong>
+        <pre><code>git clone https://github.com/notfixingit3/waffle.git
+cd waffle</code></pre>
+      </li>
+      <li>
+        <strong>Start everything</strong>
+        <pre><code>docker compose up --build</code></pre>
+        <p>Docker Compose will:</p>
+        <ul>
+          <li>Build the Go application (multi-stage)</li>
+          <li>Start PostgreSQL 16</li>
+          <li>Run all database migrations automatically</li>
+          <li>Inject safe local-development defaults (DB connection, JWT secret, admin credentials)</li>
+        </ul>
+        <p>You do <strong>not</strong> need to create a <code>.env</code> file for local development.</p>
+      </li>
+      <li>
+        <strong>Open the app</strong>
+        <div class="table-wrap" style="margin-top:10px">
+          <table>
+            <thead><tr><th>Service</th><th>URL</th></tr></thead>
+            <tbody>
+              <tr><td>Public application</td><td><code>http://localhost:8383</code></td></tr>
+              <tr><td>Admin login</td><td><code>http://localhost:8383/admin/login</code></td></tr>
+              <tr><td>Health check</td><td><code>http://localhost:8383/health</code></td></tr>
+              <tr><td>PostgreSQL</td><td><code>localhost:5432</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </li>
+    </ol>
+
+    <h2 id="default-credentials">Default Credentials</h2>
+
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Change before any real deployment</div>
+      These credentials are hardcoded into the local dev environment. Never use them in production.
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Field</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Username</td><td><code>admin</code></td></tr>
+          <tr><td>Password</td><td><code>syrup</code></td></tr>
+          <tr><td>Role</td><td>super_admin</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>To use a different password in local dev, pass it as an environment variable:</p>
+    <pre><code>ADMIN_PASSWORD=mypassword docker compose up --build</code></pre>
+
+    <h2 id="whats-running">What's Running</h2>
+    <p>The <code>docker compose up</code> command starts two containers:</p>
+    <ul>
+      <li><strong>app</strong> — the Go binary serving HTTP on port 8383</li>
+      <li><strong>postgres</strong> — PostgreSQL 16 on port 5432, database name <code>syrup</code></li>
+    </ul>
+    <p>
+      The Go app waits for PostgreSQL to be healthy before starting, then runs all pending migrations from <code>backend/migrations/</code> automatically.
+      A seed waffle and admin are inserted on a fresh database so the app is useful immediately.
+    </p>
+
+    <h2 id="first-steps">First Steps After Login</h2>
+    <p>After logging in to <code>/admin/login</code> with the default credentials:</p>
+    <ol>
+      <li><strong>Change your password</strong> — click your username in the top-right → <em>Settings</em> → <em>Change Password</em>.</li>
+      <li><strong>Set your timezone</strong> — on the same Settings page, choose your IANA timezone from the dropdown so waffle timestamps appear correctly.</li>
+      <li><strong>Create your first real waffle</strong> — click <em>New Waffle</em> on the admin dashboard.</li>
+      <li><strong>Share the public link</strong> — the public URL is <code>http://&lt;your-domain&gt;/waffle/&lt;slug&gt;</code>. Post it in your Instagram story or DM it to your buyers.</li>
+    </ol>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 Test inside Instagram</div>
+      Share your local-network IP address (e.g. <code>http://192.168.1.x:8383/waffle/demo</code>) in a DM to yourself and open it inside the Instagram app to test the mobile buyer flow.
+    </div>
+
+    <h2 id="pwa-install">Install as a PWA</h2>
+    <p>
+      Project Syrup ships a Web App Manifest and service worker, so it can be installed as a Progressive Web App on iOS and Android.
+      Buyers can add the waffle page to their home screen for a native-app feel.
+    </p>
+    <ul>
+      <li><strong>iOS (Safari)</strong>: Share → Add to Home Screen</li>
+      <li><strong>Android (Chrome)</strong>: Menu → Add to Home Screen / Install App</li>
+    </ul>
+    <p>PWA installation and service worker offline caching require HTTPS in production. Local <code>localhost</code> is a secure context and works without HTTPS.</p>
+
+    <h2 id="stopping">Stopping the App</h2>
+    <pre><code># Stop containers (data is preserved)
+docker compose down
+
+# Stop and wipe all data (fresh start)
+docker compose down -v</code></pre>
+
+    <div class="callout danger">
+      <div class="callout-title">🗑️ Data loss warning</div>
+      <code>docker compose down -v</code> removes the PostgreSQL volume. All waffles, spots, and admins will be gone. Use only when you want a clean slate.
+    </div>
+  </main>
+</div>
+
+<footer>
+  Project Syrup Wiki &mdash; <a href="https://github.com/notfixingit3/waffle">github.com/notfixingit3/waffle</a> &mdash; MIT License
+</footer>
+
+</body>
+</html>

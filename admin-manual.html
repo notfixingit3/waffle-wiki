@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Manual — Project Syrup Wiki</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .field-table td:first-child { white-space: nowrap; font-family: 'SF Mono','Fira Code',monospace; font-size:.82rem; }
+    .tag { display:inline-block; background:var(--gray-100); border:1px solid var(--gray-300); border-radius:3px; padding:1px 6px; font-size:.78rem; font-family:'SF Mono','Fira Code',monospace; }
+    .action-list { list-style:none; margin-left:0; }
+    .action-list li { padding:4px 0; border-bottom:1px solid var(--gray-100); font-size:.875rem; }
+    .action-list li:last-child { border-bottom:none; }
+    .action-code { display:inline-block; background:var(--amber-100); color:var(--amber-900); padding:1px 6px; border-radius:3px; font-family:'SF Mono','Fira Code',monospace; font-size:.8rem; margin-right:6px; }
+    .platform-list { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+    .platform-list span { background:var(--gray-100); border:1px solid var(--gray-200); border-radius:4px; padding:2px 8px; font-size:.8rem; font-family:'SF Mono','Fira Code',monospace; }
+    .section-rule { border:none; border-top:2px solid var(--amber-100); margin:48px 0 8px; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">🧇 Project Syrup <span>Wiki</span></a>
+  <nav class="topbar-nav">
+    <a href="index.html">Home</a>
+    <a href="getting-started.html">Getting Started</a>
+    <a href="admin-manual.html" class="active">Admin Manual</a>
+    <a href="deployment.html">Deployment</a>
+    <a href="api-reference.html">API Reference</a>
+    <a href="changelog.html">Changelog</a>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Access &amp; Navigation</div>
+      <a href="#roles" class="sidebar-link">Roles &amp; Permissions</a>
+      <a href="#login" class="sidebar-link">Logging In</a>
+      <a href="#lockout" class="sidebar-link sub">Login Lockout</a>
+      <a href="#password-reset" class="sidebar-link sub">Password Reset</a>
+      <a href="#navigation" class="sidebar-link">Navigation</a>
+      <a href="#display-name" class="sidebar-link sub">Display Name</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Waffles</div>
+      <a href="#dashboard" class="sidebar-link">Dashboard</a>
+      <a href="#creating-waffles" class="sidebar-link">Creating a Waffle</a>
+      <a href="#waffle-fields" class="sidebar-link sub">Fields &amp; Validation</a>
+      <a href="#waffle-templates" class="sidebar-link sub">Quick Templates</a>
+      <a href="#editing-waffles" class="sidebar-link">Editing a Waffle</a>
+      <a href="#archive-delete" class="sidebar-link">Archive &amp; Delete</a>
+      <a href="#csv-export" class="sidebar-link">CSV Export</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Managing Spots</div>
+      <a href="#manage-view" class="sidebar-link">Manage View</a>
+      <a href="#stats-bar" class="sidebar-link sub">Stats Bar</a>
+      <a href="#spot-grid" class="sidebar-link sub">Spot Grid</a>
+      <a href="#bulk-pay" class="sidebar-link sub">Bulk Pay Mode</a>
+      <a href="#pending-claims" class="sidebar-link sub">Pending Claims</a>
+      <a href="#spot-actions" class="sidebar-link sub">Spot Actions</a>
+      <a href="#entering-winner" class="sidebar-link">Winner Flow</a>
+      <a href="#change-clear-winner" class="sidebar-link sub">Change / Clear</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Admin Tools</div>
+      <a href="#admin-management" class="sidebar-link">Admin Management</a>
+      <a href="#create-admin" class="sidebar-link sub">Create Admin</a>
+      <a href="#change-role" class="sidebar-link sub">Change Role</a>
+      <a href="#reset-others-password" class="sidebar-link sub">Reset Password</a>
+      <a href="#deactivate-admin" class="sidebar-link sub">Deactivate</a>
+      <a href="#reports" class="sidebar-link">Reports</a>
+      <a href="#drought-list" class="sidebar-link sub">Drought List</a>
+      <a href="#power-buyers" class="sidebar-link sub">Power Buyers</a>
+      <a href="#monthly-activity" class="sidebar-link sub">Monthly Activity</a>
+      <a href="#spot-velocity" class="sidebar-link sub">Spot Velocity</a>
+      <a href="#audit-log" class="sidebar-link">Audit Log</a>
+      <a href="#audit-actions" class="sidebar-link sub">Audited Actions</a>
+      <a href="#audit-filters" class="sidebar-link sub">Filters &amp; Export</a>
+      <a href="#login-history" class="sidebar-link">Login History</a>
+      <a href="#users" class="sidebar-link">Users Registry</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Settings</div>
+      <a href="#settings-timezone" class="sidebar-link">Timezone</a>
+      <a href="#settings-password" class="sidebar-link">Password</a>
+      <a href="#settings-profile" class="sidebar-link">Profile &amp; Social Links</a>
+      <a href="#settings-system" class="sidebar-link">System Settings</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="page-header">
+      <h1>Admin Manual</h1>
+      <p class="subtitle">Complete operational guide for Project Syrup administrators.</p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ ROLES -->
+    <h2 id="roles">Roles &amp; Permissions</h2>
+    <p>Every admin account carries exactly one role. Role determines what menu items appear, what API calls succeed, and which confirmation requirements apply.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Role</th><th>Who should have it</th><th>Key capabilities</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-super">super_admin</span></td>
+            <td>Owner / technical operator</td>
+            <td>Everything — including admin management, system settings, all login history, and server settings.</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-admin">admin</span></td>
+            <td>Trusted staff</td>
+            <td>Full waffle management (create, edit, archive, delete), reports, audit log, login history for self and waffle_managers. Cannot manage other admins.</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-wm">waffle_manager</span></td>
+            <td>Helpers who run drops</td>
+            <td>Create and manage waffles, view reports. No archive/delete, no admin management, no audit log, no other users' login history.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Detailed permission matrix</h3>
+    <div class="table-wrap">
+      <table class="field-table">
+        <thead><tr><th>Action</th><th><span class="badge badge-super">super_admin</span></th><th><span class="badge badge-admin">admin</span></th><th><span class="badge badge-wm">waffle_manager</span></th></tr></thead>
+        <tbody>
+          <tr><td>Create / edit waffles</td><td>✅</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Manage spots (pay / release)</td><td>✅</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Set / change / clear winner</td><td>✅</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Archive / unarchive waffles</td><td>✅</td><td>✅</td><td>❌</td></tr>
+          <tr><td>Delete waffles (permanent)</td><td>✅</td><td>✅</td><td>❌</td></tr>
+          <tr><td>View reports</td><td>✅</td><td>✅</td><td>✅</td></tr>
+          <tr><td>View audit log</td><td>✅</td><td>✅</td><td>❌</td></tr>
+          <tr><td>View all login history</td><td>✅</td><td>❌</td><td>❌</td></tr>
+          <tr><td>View own login history</td><td>✅</td><td>✅</td><td>✅</td></tr>
+          <tr><td>View waffle_manager login history</td><td>✅</td><td>✅</td><td>❌</td></tr>
+          <tr><td>Create / deactivate admins</td><td>✅</td><td>❌</td><td>❌</td></tr>
+          <tr><td>Change another admin's role</td><td>✅</td><td>❌</td><td>❌</td></tr>
+          <tr><td>Reset another admin's password</td><td>✅</td><td>❌</td><td>❌</td></tr>
+          <tr><td>System settings</td><td>✅</td><td>❌</td><td>❌</td></tr>
+          <tr><td>View users registry</td><td>✅</td><td>✅</td><td>✅</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ LOGIN -->
+    <h2 id="login">Logging In</h2>
+    <p>Navigate to <code>/admin/login</code> and enter your username and password.</p>
+    <p>If you are already logged in and visit the login page, you are redirected to the dashboard automatically — you will not see the login form.</p>
+
+    <h3 id="lockout">Login Lockout</h3>
+    <p>
+      The throttle tracks failed attempts by the combination of <strong>IP address + username</strong>.
+      After <strong>5 consecutive failed attempts</strong>, that IP/username pair is locked out for <strong>15 minutes</strong>.
+      The lockout counter is held in memory (not persisted to the database) and is automatically cleaned up after it expires.
+    </p>
+    <p>
+      A successful login resets the counter for that IP/username pair.
+      If you are locked out, wait 15 minutes for the lockout to expire automatically — there is no manual unlock UI.
+      The lockout is per-IP, so a super_admin cannot unlock your account early; you must wait out the timer or try from a different IP.
+    </p>
+
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Lockout is in-memory only</div>
+      Restarting the app container clears all active lockouts. This is by design — container restarts are not under buyer control.
+    </div>
+
+    <h3 id="password-reset">Forgot Your Password?</h3>
+    <p>Click <em>Forgot password?</em> on the login page. Enter your username. A single-use reset token is generated.</p>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ No email delivery</div>
+      Project Syrup has no email server. The forgot-password API response intentionally does not expose the token.
+      A <span class="badge badge-super">super_admin</span> must look up the token in the database and share it with you out-of-band,
+      or use the <em>Reset Password</em> button in Admin Management to set a new password directly.
+    </div>
+
+    <p>Reset tokens expire after <strong>1 hour</strong> and are single-use. Once used, they cannot be replayed even if the expiry hasn't passed. To complete the reset, navigate to <code>/admin/reset-password</code> and submit the token and new password.</p>
+
+    <!-- ══════════════════════════════════════════════════════ NAVIGATION -->
+    <h2 id="navigation">Navigation</h2>
+    <p>The admin top bar contains:</p>
+    <ul>
+      <li><strong>Dashboard</strong> — active and archived waffle list</li>
+      <li><strong>Reports</strong> — analytics (all roles)</li>
+      <li><strong>Admin Tools</strong> dropdown — role-scoped; contains Audit Log, Login History, Users, Admins, Server Settings</li>
+      <li><strong>Your display name</strong> (top-right dropdown) — Settings, My Login History, About, Theme Toggle, Logout</li>
+    </ul>
+
+    <h3 id="display-name">How your name appears in the nav</h3>
+    <p>The top-right button shows your name using this priority:</p>
+    <ol>
+      <li><strong>Display Name</strong> — if set and non-empty, it is used as-is</li>
+      <li><strong>First Name + Last Name</strong> — if both are set</li>
+      <li><strong>First Name</strong> alone — if only first name is set</li>
+      <li><strong>Username</strong> — fallback when no profile fields are filled in</li>
+    </ol>
+    <p>Set these fields under <strong>Settings → Profile</strong>.</p>
+
+    <!-- ══════════════════════════════════════════════════════ DASHBOARD -->
+    <h2 id="dashboard">Dashboard</h2>
+    <p>The dashboard is your home screen after login. It shows all waffles and a summary card for each one.</p>
+
+    <p>Two tabs control which waffles are shown:</p>
+    <ul>
+      <li><strong>Active</strong> (default) — non-archived waffles, newest first</li>
+      <li><strong>Archived</strong> — waffles you've archived after completion</li>
+    </ul>
+
+    <p>Each waffle card shows: title, price per spot, total spots, status badge (Active / Completed), and counts for available / pending / paid spots. The footer of the nav bar also shows total waffle count and active waffle count.</p>
+
+    <p>From a waffle card you can click:</p>
+    <ul>
+      <li><strong>Manage</strong> — opens the spot management view</li>
+      <li><strong>Edit</strong> — opens the edit form</li>
+      <li><strong>Archive</strong> / <strong>Unarchive</strong> — toggles archived state (admin or higher)</li>
+    </ul>
+
+    <!-- ══════════════════════════════════════════════════════ CREATING WAFFLES -->
+    <h2 id="creating-waffles">Creating a Waffle</h2>
+    <p>Click <strong>New Waffle</strong> from the dashboard. Fill in the form fields described below.</p>
+
+    <h3 id="waffle-fields">Fields &amp; Validation</h3>
+    <div class="table-wrap">
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Required</th><th>Validation</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>title</td><td>✅</td><td>Non-empty string</td>
+            <td>Used as the page heading and generates the URL slug (e.g. "Blue Wig #3" → <code>/waffle/blue-wig-3</code>). Slug is set at creation time and cannot be changed.</td>
+          </tr>
+          <tr>
+            <td>total_spots</td><td>✅</td><td>Integer ≥ 2</td>
+            <td>Creates exactly that many numbered spots (1 through N) in a single transaction. <strong>Cannot be changed after creation.</strong></td>
+          </tr>
+          <tr>
+            <td>spot_price</td><td>✅</td><td>Integer &gt; 0 (cents)</td>
+            <td>Display only — Syrup does not process payments. Stored as an integer (e.g. <code>5</code> = $5). Used in revenue totals in reports.</td>
+          </tr>
+          <tr>
+            <td>description</td><td>❌</td><td>Free text</td>
+            <td>Optional subtitle shown below the title on the manage page and public waffle page.</td>
+          </tr>
+          <tr>
+            <td>payment_info</td><td>❌</td><td>Free text</td>
+            <td>Optional payment instructions (e.g. Venmo/CashApp username). Displayed to buyers on the public page.</td>
+          </tr>
+          <tr>
+            <td>instagram_media_links[]</td><td>❌</td><td>URL array</td>
+            <td>One or more Instagram post links showing the item. Empty strings are stripped out automatically. Rendered as "IG Post" buttons on both admin and public pages.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="waffle-templates">Quick-fill Templates</h3>
+    <p>The New Waffle form includes four pre-fill buttons to jumpstart common configurations:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Template</th><th>Total Spots</th><th>Price per Spot</th></tr></thead>
+        <tbody>
+          <tr><td>Small</td><td>10</td><td>$2</td></tr>
+          <tr><td>Standard</td><td>25</td><td>$5</td></tr>
+          <tr><td>Medium</td><td>50</td><td>$3</td></tr>
+          <tr><td>Large</td><td>100</td><td>$2</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Clicking a template fills the Total Spots and Spot Price fields — you still need to enter a title and any media links.</p>
+
+    <!-- ══════════════════════════════════════════════════════ EDITING -->
+    <h2 id="editing-waffles">Editing a Waffle</h2>
+    <p>From the dashboard card or the manage view, click <strong>Edit</strong>. You can change:</p>
+    <ul>
+      <li>Title</li>
+      <li>Description</li>
+      <li>Spot price</li>
+      <li>Payment info</li>
+      <li>Instagram media links (add, remove, or reorder)</li>
+    </ul>
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Total spots is fixed</div>
+      The number of spots is locked in at creation time. You cannot add or remove spots from a waffle after it is created.
+    </div>
+    <p>All edits require a valid CSRF token (automatically included in the form). The edit is recorded in the audit log as <span class="action-code">update_waffle</span>.</p>
+
+    <!-- ══════════════════════════════════════════════════════ ARCHIVE / DELETE -->
+    <h2 id="archive-delete">Archive &amp; Delete</h2>
+
+    <h3>Archiving</h3>
+    <p>
+      Archive a waffle to move it off the active dashboard without destroying any data.
+      Archived waffles appear under the <strong>Archived</strong> tab. Buyer stats, activity history, and all spot records are preserved.
+      Only <span class="badge badge-admin">admin</span> and <span class="badge badge-super">super_admin</span> can archive.
+    </p>
+    <p>Click <strong>Unarchive</strong> from the Archived tab to restore it to active if you archived by mistake.</p>
+    <p>Both actions are recorded in the audit log as <span class="action-code">archive_waffle</span> / <span class="action-code">unarchive_waffle</span>.</p>
+
+    <h3>Permanent Deletion</h3>
+    <p>Permanent deletion requires two confirmations to prevent accidents:</p>
+    <ol>
+      <li>Type the word <code>DELETE</code> exactly (case-sensitive) into the confirmation field.</li>
+      <li>Enter your current admin password.</li>
+    </ol>
+    <p>Both checks run server-side. If either fails, the delete is aborted and you are redirected back. When it succeeds, the waffle, all its spots, and its activity history are removed permanently. The audit entry for the delete is still written because it is recorded before the deletion occurs.</p>
+
+    <div class="callout danger">
+      <div class="callout-title">🗑️ Permanent and immediate</div>
+      There is no recycle bin. Archive instead if there is any chance you will need the data again.
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ CSV EXPORT -->
+    <h2 id="csv-export">CSV Export</h2>
+    <p>
+      Export a waffle's full spot list as a CSV file for external reconciliation or record keeping.
+      The export button appears in the waffle info header on the manage page.
+    </p>
+    <p>The export is also available without authentication at <code>GET /api/waffles/:slug/export</code>, so you can link buyers directly to a post-draw results file if you choose.</p>
+    <p>Columns in the export: spot number, status, <code>claimed_by_handle</code>, claimed timestamp, paid timestamp.</p>
+
+    <!-- ══════════════════════════════════════════════════════ MANAGE VIEW -->
+    <hr class="section-rule" />
+    <h2 id="manage-view">Manage View</h2>
+    <p>
+      Click <strong>Manage</strong> on any waffle card. This is your primary working screen during a live drop.
+      It has five sections: a waffle info header, a stats bar, the spot grid, a pending claims list, and the winner section.
+    </p>
+
+    <h3 id="stats-bar">Stats Bar</h3>
+    <p>A row of tiles at the top of the manage view shows real-time counts:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tile</th><th>What it counts</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Available</strong></td><td>Spots no one has claimed yet</td></tr>
+          <tr><td><strong>Pending</strong></td><td>Spots claimed but payment not confirmed</td></tr>
+          <tr><td><strong>Paid</strong></td><td>Spots with confirmed payment</td></tr>
+          <tr><td><strong>Total</strong></td><td>Calculated revenue — paid spots × spot price (updates live)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="spot-grid">Spot Grid</h3>
+    <p>A grid of numbered buttons — one per spot. Each button is color-coded by status:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Status</th><th>Color</th><th>Displayed info</th><th>Clickable?</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Available</strong></td><td>Green</td><td>Spot number only</td><td>No (buyers claim these)</td></tr>
+          <tr><td><strong>Pending</strong></td><td>Yellow/amber</td><td>Spot number + Instagram handle</td><td>Yes — opens pay/release actions</td></tr>
+          <tr><td><strong>Paid</strong></td><td>Red</td><td>Spot number + Instagram handle</td><td>No (use pending claims list to release)</td></tr>
+          <tr><td><strong>Winner</strong></td><td>Purple/secondary + 🏆</td><td>Spot number</td><td>No</td></tr>
+          <tr><td><strong>Loser</strong></td><td>Grey, dimmed</td><td>Spot number</td><td>No</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <strong>Loser</strong> is a derived status set automatically on all paid spots (other than the winner) when a winner is entered.
+      It feeds into buyer win/loss statistics. Buyers do not see the loser label on the public page — they just see the spot as completed.
+    </p>
+
+    <p>A WebSocket connection icon in the top-right of the grid shows live connection status. Updates from other admin sessions or buyer claims appear instantly without a page refresh.</p>
+
+    <h3 id="bulk-pay">Bulk Pay Mode</h3>
+    <p>
+      For fast payment reconciliation, click <strong>Bulk Pay Mode</strong> in the top-right of the spot grid.
+      The grid enters selection mode: tap any pending spots to select them (they highlight).
+      A footer bar shows how many are selected and a <strong>Mark Paid</strong> button that sends all selected spots to the pay API simultaneously.
+    </p>
+    <p>Bulk pay mode is only shown when the waffle is still active (not completed).</p>
+
+    <h3 id="pending-claims">Pending Claims List</h3>
+    <p>
+      Below the spot grid, the <strong>Pending Claims</strong> panel shows every pending spot as a card with:
+    </p>
+    <ul>
+      <li>Spot number</li>
+      <li>Instagram handle of the claimer (<code>@handle</code>)</li>
+      <li>Timestamp of when the spot was claimed</li>
+      <li><strong>Mark Paid</strong> button</li>
+      <li><strong>Release</strong> button</li>
+    </ul>
+    <p>
+      This is the most efficient way to work through pending claims one at a time as DM payments come in.
+      When there are no pending claims, it shows "No pending claims."
+    </p>
+
+    <h3 id="spot-actions">Spot Actions</h3>
+
+    <h4>Mark Paid</h4>
+    <p>
+      Transitions a <em>Pending</em> spot to <em>Paid</em>. Available from both the pending claims list and the spot grid click-handler.
+      A WebSocket broadcast updates all connected clients immediately.
+      Recorded in the audit log as <span class="action-code">mark_paid</span>.
+    </p>
+
+    <h4>Release</h4>
+    <p>
+      Transitions a <em>Pending</em> or <em>Paid</em> spot back to <em>Available</em>.
+      Use this when a buyer claims a spot but doesn't pay, or if you accidentally marked the wrong spot paid.
+      Broadcasts a spot update to all clients.
+      Recorded as <span class="action-code">release_spot</span>.
+    </p>
+
+    <!-- ══════════════════════════════════════════════════════ WINNER -->
+    <h2 id="entering-winner">Winner Flow</h2>
+    <p>
+      The <strong>Set Winner</strong> section appears at the bottom of the manage page for active waffles.
+      Type the winning spot number and click <strong>Set Winner</strong>.
+    </p>
+
+    <p>What happens when a winner is set:</p>
+    <ul>
+      <li>The winning spot's status is changed to <em>Winner</em>.</li>
+      <li>All other spots with status <em>Paid</em> are updated to <em>Loser</em>.</li>
+      <li>The winner's buyer stats (<code>total_wins</code>) increment by 1.</li>
+      <li>All losing buyers' stats (<code>total_losses</code>) increment by 1.</li>
+      <li>The waffle status changes from <em>Active</em> to <em>Completed</em>.</li>
+      <li>A <code>waffle_completed</code> WebSocket broadcast fires to all connected clients.</li>
+      <li>A winner banner appears at the top of the manage page.</li>
+    </ul>
+    <p>Recorded in the audit log as <span class="action-code">set_winner</span>.</p>
+
+    <h3 id="change-clear-winner">Changing or Clearing the Winner</h3>
+    <p>After a winner is set, the manage page shows two additional controls:</p>
+
+    <h4>Clear Winner</h4>
+    <p>
+      Removes the current winner. The winning spot reverts to <em>Active</em>. All loser spots revert to <em>Paid</em>.
+      Buyer win/loss stats are fully recalculated for all affected spots on the waffle.
+      The waffle status reverts to <em>Active</em>.
+      Fires a <code>winner_cleared</code> WebSocket broadcast.
+      Recorded as <span class="action-code">clear_winner</span>.
+    </p>
+
+    <h4>Change Winner</h4>
+    <p>
+      Reassigns the win to a different spot number without clearing first.
+      The old winning spot reverts to <em>Paid</em>, the new spot becomes <em>Winner</em>, and all loser spots are re-evaluated.
+      Buyer stats are recalculated for all affected spots.
+      Fires a <code>winner_changed</code> WebSocket broadcast.
+      Recorded as <span class="action-code">change_winner</span>.
+    </p>
+
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Stats recalculation is synchronous</div>
+      Changing or clearing a winner triggers an immediate full recalculation of buyer win/loss stats for all spots on the waffle.
+      This is a synchronous database operation — on very large waffles (100+ spots) there may be a brief delay before the API responds.
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ ADMIN MANAGEMENT -->
+    <hr class="section-rule" />
+    <h2 id="admin-management">Admin Management</h2>
+    <p>
+      Available to <span class="badge badge-super">super_admin</span> only.
+      Navigate to <strong>Admin Tools → Admins</strong>.
+      The page shows a table of all admin accounts — active and inactive — with username, email, role, status, and last login.
+      An inline role-permissions summary table is available at the bottom of the page for quick reference.
+    </p>
+
+    <h3 id="create-admin">Creating an Admin</h3>
+    <p>Click <strong>New Admin</strong> and fill in the form:</p>
+    <div class="table-wrap">
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Required</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>username</td><td>✅</td><td>Must be unique. Used at login. Cannot be changed after creation.</td></tr>
+          <tr><td>email</td><td>✅</td><td>Must be unique. Currently used for password reset lookup and profile only (no automated email).</td></tr>
+          <tr><td>password</td><td>✅</td><td>Must pass the password policy (see below). The admin should change it on first login.</td></tr>
+          <tr><td>role</td><td>✅</td><td>One of <code>super_admin</code>, <code>admin</code>, <code>waffle_manager</code>. Defaults to <code>admin</code> if an invalid value is submitted.</td></tr>
+          <tr><td>first_name</td><td>❌</td><td>Optional — used in the display name priority chain.</td></tr>
+          <tr><td>last_name</td><td>❌</td><td>Optional.</td></tr>
+          <tr><td>display_name</td><td>❌</td><td>Optional — takes top priority in the nav display name.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>All form errors are returned inline on the page (username required, email required, password required, password policy failures). The new admin is created active and with timezone set to UTC by default.</p>
+    <p>Recorded as <span class="action-code">create_admin</span>.</p>
+
+    <h3 id="change-role">Changing a Role</h3>
+    <p>Click the role badge on an admin row in the table. Select the new role from the dropdown. Role changes for demotions (e.g. admin → waffle_manager) require your current password as confirmation before the API call proceeds.</p>
+
+    <div class="callout warn">
+      <div class="callout-title">⚠️ You cannot change your own role</div>
+      The current admin's own row is marked and role changes are blocked on it. A different super_admin must change your role.
+    </div>
+
+    <p>Recorded as <span class="action-code">update_admin_role</span>.</p>
+
+    <h3 id="reset-others-password">Resetting Another Admin's Password</h3>
+    <p>Click <strong>Reset Password</strong> on an admin row. Enter a new temporary password (must pass the password policy). The admin's current session is not invalidated — they will need to log out and back in with the new password. Send the temporary password to them securely and ask them to change it immediately.</p>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ Cannot reset your own password here</div>
+      The API rejects attempts to reset your own password via this route. Use <strong>Settings → Change Password</strong> for your own account.
+    </div>
+
+    <p>Recorded as <span class="action-code">reset_admin_password</span>.</p>
+
+    <h3 id="deactivate-admin">Deactivating an Admin</h3>
+    <p>Click <strong>Deactivate</strong> on an admin row and confirm your password. The account is set to <code>active = false</code>. Deactivated admins cannot log in — authentication returns an "account deactivated" error even with a correct password. Their audit history, login history, and any waffles they created are fully preserved.</p>
+    <p>To reactivate a deactivated admin, use the API directly (<code>PATCH /api/admin/admins/:id</code> with <code>{"active": true}</code>) — there is no UI reactivation button at this time.</p>
+    <p>Recorded as <span class="action-code">deactivate_admin</span>.</p>
+
+    <!-- ══════════════════════════════════════════════════════ REPORTS -->
+    <hr class="section-rule" />
+    <h2 id="reports">Reports</h2>
+    <p>Navigate to <strong>Reports</strong> in the top nav. Available to all roles. Reports are rendered client-side from JSON endpoints — the page loads first, then data is fetched via JavaScript.</p>
+    <p>Each report has a date range selector. The default range varies by report.</p>
+
+    <h3 id="drought-list">Drought List</h3>
+    <p>
+      Shows buyers who have been entering waffles but haven't won in a long time.
+      Sorted by <code>longest_drought</code> — the number of days since their last win (buyers who have never won are listed as 99,999 days).
+    </p>
+    <p>Columns: Instagram handle, total waffle entries in the date range, last entry date, days since last win.</p>
+    <p>Use this to identify loyal buyers who are overdue for attention — or to reward buyers who've been entering for a long time without a win.</p>
+
+    <h3 id="power-buyers">Power Buyers</h3>
+    <p>
+      Ranks buyers by the number of paid spots across all waffles in the date range.
+      Shows your most financially committed participants.
+    </p>
+    <p>Columns: Instagram handle, total spots claimed (paid), total amount spent, win rate percentage.</p>
+    <p>
+      Win rate is calculated as: <code>wins ÷ (wins + losses) × 100</code>, rounded to one decimal place.
+      A buyer with no completed waffles (only pending spots) shows 0%.
+      Default limit: top 20 buyers.
+    </p>
+
+    <h3 id="monthly-activity">Monthly Activity</h3>
+    <p>Aggregates three streams of activity by calendar month:</p>
+    <ul>
+      <li><strong>Waffles</strong> — number of waffles created that month</li>
+      <li><strong>Spots Claimed</strong> — number of spots claimed (any status) that month</li>
+      <li><strong>Revenue</strong> — sum of <code>spot_price</code> for all spots marked paid that month</li>
+    </ul>
+    <p>This is the primary tool for tracking the health and growth of your waffle operation over time.</p>
+
+    <h3 id="spot-velocity">Spot Velocity</h3>
+    <p>Measures how quickly your waffles fill up, grouped by waffle status (active vs completed):</p>
+    <ul>
+      <li><strong>Waffle Count</strong> — number of waffles in the group</li>
+      <li><strong>Avg Time to First Claim</strong> — average hours from waffle creation until the first spot was claimed</li>
+      <li><strong>Avg Time to Completion</strong> — average hours from waffle creation until <code>completed_at</code> (only meaningful for completed waffles)</li>
+    </ul>
+    <p>Useful for understanding buyer demand and deciding how large to make your waffles.</p>
+
+    <!-- ══════════════════════════════════════════════════════ AUDIT LOG -->
+    <hr class="section-rule" />
+    <h2 id="audit-log">Audit Log</h2>
+    <p>
+      Available to <span class="badge badge-admin">admin</span> and <span class="badge badge-super">super_admin</span>.
+      Navigate to <strong>Admin Tools → Audit Log</strong>.
+    </p>
+    <p>
+      Every state change performed by any admin is written to the <code>audit_log</code> table.
+      Writes are asynchronous (in a goroutine) so they do not slow down the operation that triggered them.
+      Each entry records: timestamp, the acting admin's ID, the action code, the affected entity type and ID, a human-readable detail string, and the admin's IP address at time of action.
+    </p>
+
+    <h3 id="audit-actions">Audited Actions</h3>
+    <ul class="action-list">
+      <li><span class="action-code">create_waffle</span> Waffle created — includes the title</li>
+      <li><span class="action-code">update_waffle</span> Waffle edited — includes the new title</li>
+      <li><span class="action-code">archive_waffle</span> Waffle archived</li>
+      <li><span class="action-code">unarchive_waffle</span> Waffle restored from archive</li>
+      <li><span class="action-code">delete_waffle</span> Waffle permanently deleted</li>
+      <li><span class="action-code">mark_paid</span> Spot marked paid — includes spot number</li>
+      <li><span class="action-code">release_spot</span> Spot released back to available — includes spot number</li>
+      <li><span class="action-code">set_winner</span> Winner set — includes winning spot number</li>
+      <li><span class="action-code">clear_winner</span> Winner cleared</li>
+      <li><span class="action-code">change_winner</span> Winner changed — includes new winning spot number</li>
+      <li><span class="action-code">create_admin</span> New admin created — includes username and role</li>
+      <li><span class="action-code">update_admin_role</span> Admin role changed — includes new role</li>
+      <li><span class="action-code">update_admin_profile</span> Admin profile updated</li>
+      <li><span class="action-code">reset_admin_password</span> Another admin's password was reset</li>
+      <li><span class="action-code">deactivate_admin</span> Admin deactivated — includes username</li>
+      <li><span class="action-code">update_whois_settings</span> WHOIS server setting updated — includes new value</li>
+      <li><span class="action-code">update_setting</span> Any system setting updated — includes key and new value</li>
+    </ul>
+
+    <h3 id="audit-filters">Filters &amp; Export</h3>
+    <p>The audit log page has filter controls:</p>
+    <ul>
+      <li><strong>Admin</strong> — filter by acting admin (super_admin can see all; admin sees self and waffle_managers)</li>
+      <li><strong>Action</strong> — filter by action code (e.g. <code>mark_paid</code>)</li>
+      <li><strong>Target type</strong> — filter by entity type (<code>waffle</code>, <code>spot</code>, <code>admin</code>, <code>settings</code>)</li>
+      <li><strong>Date range</strong> — from/to timestamps</li>
+    </ul>
+    <p>
+      Results are paginated (default 20 per page).
+      Click <strong>Export CSV</strong> to download the current filter results as a CSV file.
+      The export URL includes URL-encoded filter parameters so it is reproducible and shareable.
+    </p>
+    <p>Audit log entries older than the configured retention period (default 90 days) are automatically purged. Change this under Server Settings.</p>
+
+    <!-- ══════════════════════════════════════════════════════ LOGIN HISTORY -->
+    <h2 id="login-history">Login History</h2>
+    <p>Navigate to your username dropdown → <strong>My Login History</strong>, or <strong>Admin Tools → Login History</strong> for the full admin view.</p>
+
+    <p>Each login entry captures:</p>
+    <div class="table-wrap">
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>ip_address</td><td>IP address the login came from</td></tr>
+          <tr><td>browser</td><td>Browser name parsed from the User-Agent header</td></tr>
+          <tr><td>os</td><td>Operating system parsed from User-Agent</td></tr>
+          <tr><td>device_type</td><td>Desktop, mobile, or tablet — parsed from User-Agent</td></tr>
+          <tr><td>ip_org</td><td>Organization name from WHOIS lookup (async, may be empty for private IPs)</td></tr>
+          <tr><td>ip_country</td><td>Country from WHOIS lookup</td></tr>
+          <tr><td>ip_city</td><td>City from WHOIS lookup</td></tr>
+          <tr><td>ip_asn</td><td>ASN from WHOIS lookup</td></tr>
+          <tr><td>whois_server</td><td>Which WHOIS server was queried (recorded for auditability)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>WHOIS lookups are asynchronous with a 10-second timeout — they do not slow down the login flow. Private/RFC1918 addresses (<code>10.x</code>, <code>172.16–31.x</code>, <code>192.168.x</code>) are skipped and WHOIS fields are left empty.</p>
+
+    <h4>Visibility by role</h4>
+    <ul>
+      <li><span class="badge badge-wm">waffle_manager</span> — own entries only</li>
+      <li><span class="badge badge-admin">admin</span> — own entries + all waffle_manager entries</li>
+      <li><span class="badge badge-super">super_admin</span> — all entries; can also filter by admin</li>
+    </ul>
+
+    <p>Login history entries older than the configured retention period (default 90 days) are purged automatically. Change this under Server Settings.</p>
+
+    <!-- ══════════════════════════════════════════════════════ USERS REGISTRY -->
+    <h2 id="users">Users Registry</h2>
+    <p>Navigate to <strong>Admin Tools → Users</strong>. Available to all roles.</p>
+    <p>
+      The users registry is a deduplicated list of every Instagram handle that has ever claimed a spot.
+      On startup, the app backfills all existing <code>claimed_by_handle</code> values from the spots table into the <code>users</code> table automatically.
+      Every new claim upserts the handle if it isn't already present.
+    </p>
+
+    <h4>Search and pagination</h4>
+    <ul>
+      <li>A <strong>search</strong> box filters by Instagram handle (substring match).</li>
+      <li>Results are paginated — 25 per page by default, configurable up to 100 per page via the <code>per_page</code> query param.</li>
+      <li>The page shows total user count and page navigation.</li>
+    </ul>
+
+    <p>Use this page to look up a buyer's first-seen date, or simply to get a count of how many unique buyers have used the platform.</p>
+
+    <!-- ══════════════════════════════════════════════════════ SETTINGS -->
+    <hr class="section-rule" />
+    <h2 id="settings-timezone">Settings — Timezone</h2>
+    <p>Click your username → <strong>Settings</strong>. The timezone dropdown accepts any valid IANA timezone string (e.g. <code>America/New_York</code>, <code>Europe/London</code>, <code>Asia/Tokyo</code>). Invalid values are rejected by the server.</p>
+    <p>All timestamps shown in the admin UI — waffle creation dates, spot claimed/paid times, login history — are displayed in your selected timezone.</p>
+
+    <h2 id="settings-password">Settings — Change Password</h2>
+    <p>From Settings, scroll to the <em>Change Password</em> section. You must provide your current password before a new password is accepted.</p>
+
+    <h4>Password policy</h4>
+    <p>The minimum password length is configurable (default 8, stored in <code>password_min_length</code> system setting). Passwords are also checked against a blocklist of common passwords. Blocked values include:</p>
+    <pre><code>password  password1  password123  12345678  123456789
+qwerty  qwerty123  admin  admin123  letmein  welcome
+welcome123  iloveyou  monkey  dragon  football  baseball
+abc123  111111  00000000</code></pre>
+    <p>Passwords are hashed with bcrypt before storage. The plaintext is never logged or stored.</p>
+
+    <h2 id="settings-profile">Settings — Profile &amp; Social Links</h2>
+    <p>From Settings, the profile section allows you to set:</p>
+    <div class="table-wrap">
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>first_name</td><td>Used in the display name priority chain</td></tr>
+          <tr><td>last_name</td><td>Combined with first_name for nav display</td></tr>
+          <tr><td>email</td><td>Must be unique across all admin accounts. Used for password reset. No automated email is sent.</td></tr>
+          <tr><td>social_links</td><td>Array of platform + handle pairs</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Social links</h4>
+    <p>You can store up to <strong>10 social links</strong>. Each link has a platform and a handle. Valid platforms:</p>
+    <div class="platform-list">
+      <span>instagram</span><span>tiktok</span><span>x</span><span>facebook</span><span>youtube</span><span>discord</span>
+    </div>
+    <p>Handles are limited to 100 characters each. Duplicate platforms in the same admin's profile are not allowed. These are stored for your profile only — they are not displayed publicly.</p>
+
+    <h2 id="settings-system">System Settings</h2>
+    <p>
+      <span class="badge badge-super">super_admin</span> only.
+      Navigate to <strong>Admin Tools → Server Settings</strong>.
+      Each setting is stored as a key/value pair in the <code>system_settings</code> table, so changes persist across restarts.
+    </p>
+
+    <div class="table-wrap">
+      <table class="field-table">
+        <thead><tr><th>Setting key</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>whois_server</td><td><code>whois.pwhois.org</code></td>
+            <td>WHOIS server used for async IP enrichment on admin logins. Must be a reachable hostname. Changes take effect on the next login.</td>
+          </tr>
+          <tr>
+            <td>jwt_expiration_hours</td><td><code>24</code></td>
+            <td>How long admin JWT tokens remain valid (in hours). Changing this does not invalidate existing tokens — they expire at their original time. Must be a positive integer.</td>
+          </tr>
+          <tr>
+            <td>password_min_length</td><td><code>8</code></td>
+            <td>Minimum character length for admin passwords. Applied to new passwords and password changes. Does not enforce retroactively on existing passwords.</td>
+          </tr>
+          <tr>
+            <td>audit_retention_days</td><td><code>90</code></td>
+            <td>Audit log entries older than this many days are purged by the automatic retention job. Set to a higher value to retain more history.</td>
+          </tr>
+          <tr>
+            <td>login_history_retention_days</td><td><code>90</code></td>
+            <td>Login history entries older than this many days are purged. Separate from audit log retention so you can tune them independently.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Changes to any system setting are recorded in the audit log as <span class="action-code">update_setting</span> (or <span class="action-code">update_whois_settings</span> for WHOIS specifically), with the old key and new value captured in the details field.</p>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 Settings take effect immediately</div>
+      All settings are read from the database on every use — there is no in-memory cache with a TTL. A change to <code>password_min_length</code> will apply the next time someone submits a password form. A change to <code>audit_retention_days</code> will apply the next time the retention cleanup job runs.
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  Project Syrup Wiki &mdash; <a href="https://github.com/notfixingit3/waffle">github.com/notfixingit3/waffle</a> &mdash; MIT License
+</footer>
+
+</body>
+</html>

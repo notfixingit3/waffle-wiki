@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deployment — Project Syrup Wiki</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">🧇 Project Syrup <span>Wiki</span></a>
+  <nav class="topbar-nav">
+    <a href="index.html">Home</a>
+    <a href="getting-started.html">Getting Started</a>
+    <a href="admin-manual.html">Admin Manual</a>
+    <a href="deployment.html" class="active">Deployment</a>
+    <a href="api-reference.html">API Reference</a>
+    <a href="changelog.html">Changelog</a>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Deployment</div>
+      <a href="#env-vars" class="sidebar-link">Environment Variables</a>
+      <a href="#docker-compose" class="sidebar-link">Docker Compose</a>
+      <a href="#railway" class="sidebar-link">Railway</a>
+      <a href="#render" class="sidebar-link">Render</a>
+      <a href="#flyio" class="sidebar-link">Fly.io</a>
+      <a href="#release-channels" class="sidebar-link">Release Channels</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Operations</div>
+      <a href="#ssl" class="sidebar-link">SSL / HTTPS</a>
+      <a href="#nginx" class="sidebar-link">nginx Reverse Proxy</a>
+      <a href="#migrations" class="sidebar-link">Migrations</a>
+      <a href="#backup" class="sidebar-link">Backup &amp; Restore</a>
+      <a href="#monitoring" class="sidebar-link">Monitoring</a>
+      <a href="#pwa-notes" class="sidebar-link">PWA Notes</a>
+      <a href="#instagram-notes" class="sidebar-link">Instagram Browser</a>
+      <a href="#updating" class="sidebar-link">Updating</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="page-header">
+      <h1>Deployment</h1>
+      <p class="subtitle">Production setup options, environment variables, and operational runbook.</p>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Prerequisites</div>
+      All production deployment methods require Docker and Docker Compose v2+.
+      You also need a publicly accessible domain and HTTPS for WebSockets and PWA to work correctly.
+    </div>
+
+    <!-- ════════════════════════════ ENV VARS -->
+    <h2 id="env-vars">Environment Variables</h2>
+    <p>Create a <code>.env</code> file in the project root (copy from <code>.env.example</code>):</p>
+
+    <pre><code># Docker image version — pin this for reproducible deploys
+WAFFLE_VERSION=v0.1.18
+
+# PostgreSQL connection string
+DATABASE_URL=postgres://syrup:your_secure_password@postgres:5432/syrup?sslmode=disable
+
+# JWT signing secret — generate with: openssl rand -base64 32
+JWT_SECRET=your-secure-random-secret-here
+
+# Default admin password — change immediately after first login
+ADMIN_PASSWORD=your-secure-admin-password</code></pre>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Variable</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>WAFFLE_VERSION</code></td><td>✅</td><td>Docker image tag to pull. Use a pinned version for production (e.g. <code>v0.1.18</code>). Use <code>latest</code> only if you want auto-tracking.</td></tr>
+          <tr><td><code>DATABASE_URL</code></td><td>✅</td><td>Full PostgreSQL connection string including credentials, host, port, and database name.</td></tr>
+          <tr><td><code>JWT_SECRET</code></td><td>✅</td><td>Random secret for signing admin session tokens. Minimum 32 characters. Changing this invalidates all active sessions.</td></tr>
+          <tr><td><code>ADMIN_PASSWORD</code></td><td>✅</td><td>Password for the default <code>admin</code> account created on first run. Change immediately after first login.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout danger">
+      <div class="callout-title">🔐 Secret management</div>
+      Never commit your <code>.env</code> file to version control. Use your platform's secret management
+      (Railway Variables, Render Environment, Fly.io Secrets) instead of a plain <code>.env</code> file
+      on hosted platforms.
+    </div>
+
+    <!-- ════════════════════════════ DOCKER COMPOSE -->
+    <h2 id="docker-compose">Option 1: Docker Compose (Single Server)</h2>
+    <p>The recommended approach for a VPS or dedicated server.</p>
+
+    <ol class="steps">
+      <li>
+        <strong>Copy the production compose file to your server</strong>
+        <pre><code>scp docker-compose.prod.yml user@yourserver:~/waffle/
+scp .env user@yourserver:~/waffle/</code></pre>
+      </li>
+      <li>
+        <strong>Start the services</strong>
+        <pre><code>docker compose -f docker-compose.prod.yml up -d</code></pre>
+        This pulls the pinned image from GHCR, starts PostgreSQL, runs migrations, and starts the app.
+      </li>
+      <li>
+        <strong>Verify it's running</strong>
+        <pre><code>curl http://localhost:8383/health
+# {"status":"ok","db":"connected"}</code></pre>
+      </li>
+      <li>
+        <strong>Open the admin and change your password</strong><br/>
+        Navigate to <code>https://yourdomain.com/admin/login</code>.
+      </li>
+    </ol>
+
+    <h3>Common operations</h3>
+    <pre><code># View logs (follow)
+docker compose -f docker-compose.prod.yml logs -f
+
+# Restart the app container only
+docker compose -f docker-compose.prod.yml restart app
+
+# Stop everything
+docker compose -f docker-compose.prod.yml down</code></pre>
+
+    <!-- ════════════════════════════ RAILWAY -->
+    <h2 id="railway">Option 2: Railway</h2>
+    <ol class="steps">
+      <li>Connect your GitHub fork of the repository to a new Railway project.</li>
+      <li>Add the <strong>PostgreSQL</strong> plugin to the project. Railway will inject <code>DATABASE_URL</code> automatically.</li>
+      <li>Set environment variables in the Railway dashboard: <code>JWT_SECRET</code>, <code>ADMIN_PASSWORD</code>.</li>
+      <li>Deploy. Railway auto-detects the <code>Dockerfile</code> at the repo root.</li>
+    </ol>
+
+    <!-- ════════════════════════════ RENDER -->
+    <h2 id="render">Option 3: Render</h2>
+    <ol class="steps">
+      <li>Create a new <strong>Web Service</strong> on Render and connect your GitHub repo.</li>
+      <li>Set the <strong>Runtime</strong> to <em>Docker</em>.</li>
+      <li>Create a <strong>PostgreSQL</strong> database on Render and copy its connection string.</li>
+      <li>Set environment variables: <code>DATABASE_URL</code>, <code>JWT_SECRET</code>, <code>ADMIN_PASSWORD</code>.</li>
+      <li>Deploy.</li>
+    </ol>
+
+    <!-- ════════════════════════════ FLY.IO -->
+    <h2 id="flyio">Option 4: Fly.io</h2>
+    <pre><code># Install flyctl
+curl -L https://fly.io/install.sh | sh
+
+# Launch the app (uses the root Dockerfile)
+fly launch --dockerfile Dockerfile --name syrup-app
+
+# Create a managed Postgres database
+fly postgres create --name syrup-db
+
+# Attach the database (sets DATABASE_URL automatically)
+fly postgres attach --app syrup-app syrup-db
+
+# Set remaining secrets
+fly secrets set JWT_SECRET="your-secret" ADMIN_PASSWORD="your-password"
+
+# Deploy
+fly deploy</code></pre>
+
+    <!-- ════════════════════════════ RELEASE CHANNELS -->
+    <h2 id="release-channels">Release Channels</h2>
+    <p>Pre-built images are published to <code>ghcr.io/notfixingit3/waffle</code> for <code>linux/amd64</code> and <code>linux/arm64</code>.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Channel</th><th>Tag</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Pinned</strong></td>
+            <td><code>v0.1.18</code></td>
+            <td>A specific stable release. <strong>Recommended for production.</strong> Fully reproducible.</td>
+          </tr>
+          <tr>
+            <td><strong>Stable</strong></td>
+            <td><code>latest</code></td>
+            <td>Tracks the latest stable release from the <code>main</code> branch. Auto-updates on pull.</td>
+          </tr>
+          <tr>
+            <td><strong>Dev</strong></td>
+            <td><code>dev</code></td>
+            <td>Tracks the <code>dev</code> branch. For staging and testing only — may be unstable.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 Pin in production</div>
+      Always pin to a specific version tag in production (e.g. <code>WAFFLE_VERSION=v0.1.18</code>).
+      Using <code>latest</code> means a <code>docker compose pull</code> could silently update your app.
+    </div>
+
+    <!-- ════════════════════════════ SSL -->
+    <h2 id="ssl">SSL / HTTPS</h2>
+    <p>HTTPS is required for production because:</p>
+    <ul>
+      <li>WebSocket connections (<code>wss://</code>) require a secure context</li>
+      <li>Service workers (PWA) only register on HTTPS or <code>localhost</code></li>
+      <li>Secure cookies (used for JWT) only work over HTTPS</li>
+    </ul>
+    <p><strong>Recommended:</strong> Put Cloudflare or nginx in front for SSL termination. The Go app itself serves plain HTTP behind the proxy.</p>
+
+    <!-- ════════════════════════════ NGINX -->
+    <h2 id="nginx">nginx Reverse Proxy</h2>
+    <pre><code>server {
+    listen 443 ssl http2;
+    server_name yourdomain.com;
+
+    ssl_certificate     /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+
+    # Regular HTTP traffic
+    location / {
+        proxy_pass         http://localhost:8383;
+        proxy_http_version 1.1;
+        proxy_set_header   Host            $host;
+        proxy_set_header   X-Real-IP       $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # WebSocket upgrade — required for real-time spot updates
+    location /ws {
+        proxy_pass         http://localhost:8383;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade    $http_upgrade;
+        proxy_set_header   Connection "upgrade";
+        proxy_set_header   Host       $host;
+        proxy_read_timeout 86400s;
+    }
+}
+
+# Redirect HTTP → HTTPS
+server {
+    listen 80;
+    server_name yourdomain.com;
+    return 301 https://$host$request_uri;
+}</code></pre>
+
+    <!-- ════════════════════════════ MIGRATIONS -->
+    <h2 id="migrations">Database Migrations</h2>
+    <p>Migrations run <strong>automatically</strong> every time the backend container starts. They are safe to run on an already-migrated database (idempotent via migration tracking).</p>
+    <p>To run migrations manually (e.g. after a restore):</p>
+    <pre><code>docker compose exec app ./main migrate</code></pre>
+
+    <p>Migration files live in <code>backend/migrations/</code> and are numbered sequentially (<code>001_</code>, <code>002_</code>, …). Each has an <code>.up.sql</code> and a <code>.down.sql</code>.</p>
+
+    <!-- ════════════════════════════ BACKUP -->
+    <h2 id="backup">Backup &amp; Restore</h2>
+    <h3>Backup</h3>
+    <pre><code># Dump the database to a file
+docker compose exec postgres pg_dump -U syrup syrup > backup-$(date +%Y%m%d).sql</code></pre>
+
+    <h3>Restore</h3>
+    <pre><code># Restore from a dump file
+docker compose exec -T postgres psql -U syrup syrup < backup-20260531.sql</code></pre>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 Automate backups</div>
+      Set up a daily cron job to dump the database and ship it to S3, Backblaze B2, or any object store.
+      A simple approach: <code>pg_dump | gzip | aws s3 cp - s3://your-bucket/backup-$(date +%Y%m%d).sql.gz</code>
+    </div>
+
+    <!-- ════════════════════════════ MONITORING -->
+    <h2 id="monitoring">Monitoring</h2>
+    <p>The app exposes a health check endpoint:</p>
+    <pre><code>GET /health
+# 200 OK
+{"status": "ok", "db": "connected"}</code></pre>
+
+    <p>It returns <code>503</code> if the database connection is unhealthy. Set up an external uptime monitor (UptimeRobot, Better Uptime, Freshping) to ping <code>/health</code> every 5 minutes.</p>
+
+    <p>The app also exposes a readiness probe at <code>GET /ready</code> (same response format) intended for container orchestrators.</p>
+
+    <!-- ════════════════════════════ PWA -->
+    <h2 id="pwa-notes">PWA Notes</h2>
+    <ul>
+      <li><strong>HTTPS is required</strong> for service worker registration in production.</li>
+      <li><strong>Cached pages:</strong> home, waffle list, waffle detail, buyer stats. Admin routes (<code>/admin/*</code>) are excluded from the service worker.</li>
+      <li><strong>Cache invalidation:</strong> deploying a new version automatically invalidates the service worker cache. Returning users see an <em>"Update Available"</em> toast and can reload to get the latest version.</li>
+      <li><strong>Installable:</strong> the app ships a Web App Manifest (<code>/manifest.json</code>), 192×192 and 512×512 icons, and a maskable icon. Buyers can add the spot page to their home screen for a native-app experience.</li>
+    </ul>
+
+    <!-- ════════════════════════════ INSTAGRAM -->
+    <h2 id="instagram-notes">Instagram In-App Browser Notes</h2>
+    <p>The buyer-facing UI is optimized specifically for Instagram's in-app browser, which is WebKit on iOS and Chrome Custom Tabs on Android:</p>
+    <ul>
+      <li>Viewport is locked to prevent unintended zoom on input focus</li>
+      <li>Touch targets are a minimum of 44×44 px</li>
+      <li>No pull-to-refresh conflicts</li>
+      <li>300ms tap delay is eliminated</li>
+    </ul>
+    <p>Test by DMing your waffle URL to yourself inside Instagram and opening it there — don't only test in a desktop browser.</p>
+
+    <!-- ════════════════════════════ UPDATING -->
+    <h2 id="updating">Updating to a New Release</h2>
+    <ol class="steps">
+      <li>
+        <strong>Update <code>WAFFLE_VERSION</code></strong> in your <code>.env</code> file to the new tag (e.g. <code>v0.1.18</code>).
+      </li>
+      <li>
+        <strong>Pull the new image and restart</strong>
+        <pre><code>docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d</code></pre>
+      </li>
+      <li>
+        <strong>Migrations run automatically</strong> on startup. Check logs to confirm:
+        <pre><code>docker compose -f docker-compose.prod.yml logs app | grep migration</code></pre>
+      </li>
+      <li>
+        <strong>Verify</strong>
+        <pre><code>curl https://yourdomain.com/health</code></pre>
+      </li>
+    </ol>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ Zero-downtime updates</div>
+      Docker Compose will stop the old container, start the new one, and run migrations.
+      There will be a brief downtime (typically under 10 seconds) during the container swap.
+      For zero-downtime deploys, put a load balancer in front with multiple instances, or use a platform like Railway/Render that handles rolling deploys natively.
+    </div>
+  </main>
+</div>
+
+<footer>
+  Project Syrup Wiki &mdash; <a href="https://github.com/notfixingit3/waffle">github.com/notfixingit3/waffle</a> &mdash; MIT License
+</footer>
+
+</body>
+</html>
