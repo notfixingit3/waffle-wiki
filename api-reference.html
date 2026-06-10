@@ -20,6 +20,7 @@
     <a href="admin-manual.html">Admin Manual</a>
     <a href="deployment.html">Deployment</a>
     <a href="api-reference.html" class="active">API Reference</a>
+    <a href="beta-testers.html">Beta Testers</a>
     <a href="changelog.html">Changelog</a>
   </nav>
 </header>
@@ -116,14 +117,35 @@
     <div class="endpoint">
       <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/claims</span></div>
       <div class="endpoint-desc">
-        Claim one or more spots. Rate-limited.
+        Claim one or more specific spots. Rate-limited.
         <pre><code>{
-  "waffle_slug": "blue-wig-3",
-  "spot_numbers": [4, 7, 12],
+  "waffle_id": "&lt;uuid&gt;",
+  "spots": [4, 7, 12],
   "instagram_handle": "dani_boo_glass"
 }</code></pre>
         Returns the updated spot objects or an error if any spot is already taken.
-        Transactionally safe — no double-claims possible.
+        Transactionally safe — no double-claims possible. Instagram handle is normalized server-side (lowercased, <code>@</code> stripped).
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/claims/random</span></div>
+      <div class="endpoint-desc">
+        <strong>Added in v0.1.21-beta.0.</strong> Claim <code>count</code> random available spots in a single transaction. Rate-limited via the same limiter as <code>/api/claims</code>.
+        <pre><code>{
+  "waffle_id": "&lt;uuid&gt;",
+  "count": 5,
+  "instagram_handle": "dani_boo_glass"
+}</code></pre>
+        <p>Server selects <code>count</code> random spots under a row-level lock and claims them. Returns:</p>
+        <pre><code>{
+  "claimed_count": 5,
+  "requested_count": 5,
+  "spot_numbers": [3, 8, 14, 22, 29],
+  "message": "Claimed 5 spots"
+}</code></pre>
+        <p><strong>Partial fulfillment:</strong> if fewer spots are available than requested, the server claims as many as it can and returns <code>claimed_count &lt; requested_count</code> with a message like <code>"Claimed 3 of 5 requested spots"</code>. No client-side maximum cap is enforced — the server is authoritative.</p>
+        <p>Each claimed spot fires a separate WebSocket <code>spot_update</code> broadcast.</p>
       </div>
     </div>
 
@@ -209,10 +231,15 @@
         Create a new waffle.
         <pre><code>{
   "title": "Blue Wig #3",
-  "price_per_spot": "25.00",
+  "description": "Limited drop",
   "total_spots": 50,
-  "media_links": ["https://www.instagram.com/p/..."]
+  "spot_price": 5,
+  "payment_info": "Venmo @myhandle",
+  "item_count": 1,
+  "image_url": "https://...",
+  "instagram_media_links": ["https://www.instagram.com/p/..."]
 }</code></pre>
+        <p><code>item_count</code> defaults to 1 if omitted. Set to 2–10 for multi-item waffles where you'll draw that many winners. Returns the created waffle with its generated <code>slug</code>.</p>
       </div>
     </div>
     <div class="endpoint">
@@ -238,21 +265,25 @@
     <div class="endpoint">
       <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/waffles/:id/winner</span></div>
       <div class="endpoint-desc">
-        Enter the winning spot number.
-        <pre><code>{ "spot_number": 17 }</code></pre>
-        Marks the spot as winner, updates buyer stats for all paid spots.
+        Set winner(s). <strong>Updated in v0.1.20</strong> to accept an array — supply one entry per item.
+        <pre><code>{ "winning_spot_numbers": [17] }
+// or for a multi-item waffle (item_count &gt; 1):
+{ "winning_spot_numbers": [17, 23, 42] }</code></pre>
+        Marks each listed spot as <em>winner</em>, marks all other paid spots as <em>loser</em>, populates the waffle's <code>winning_instagram_handles</code> array, and updates buyer stats. Spots must be distinct and currently <em>paid</em>. Fires a <code>waffle_completed</code> WebSocket broadcast.
       </div>
     </div>
     <div class="endpoint">
       <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/waffles/:id/clear-winner</span></div>
-      <div class="endpoint-desc">Clear the current winner. Resets the winning spot to active; recalculates buyer stats.</div>
+      <div class="endpoint-desc">Clear <strong>all</strong> winners on the waffle. Resets every winning spot to <em>paid</em>, restores loser spots to <em>paid</em>, recalculates buyer stats, and reverts the waffle to <em>active</em>. Fires a <code>winner_cleared</code> WebSocket broadcast.</div>
     </div>
     <div class="endpoint">
       <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/waffles/:id/change-winner</span></div>
       <div class="endpoint-desc">
-        Reassign the winner to a different spot.
-        <pre><code>{ "spot_number": 23 }</code></pre>
-        Recalculates buyer stats for all affected spots.
+        Reassign winner(s) without clearing first. Same payload shape as <code>/winner</code>.
+        <pre><code>{ "winning_spot_numbers": [23] }
+// or for multi-item:
+{ "winning_spot_numbers": [23, 31, 44] }</code></pre>
+        Old winning spots not in the new selection revert to <em>paid</em>; new selections become <em>winner</em>; loser status is recomputed across all paid spots. Recalculates buyer stats. Fires a <code>winner_changed</code> WebSocket broadcast.
       </div>
     </div>
 

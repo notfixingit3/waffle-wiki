@@ -31,6 +31,7 @@
     <a href="admin-manual.html" class="active">Admin Manual</a>
     <a href="deployment.html">Deployment</a>
     <a href="api-reference.html">API Reference</a>
+    <a href="beta-testers.html">Beta Testers</a>
     <a href="changelog.html">Changelog</a>
   </nav>
 </header>
@@ -55,6 +56,12 @@
       <a href="#editing-waffles" class="sidebar-link">Editing a Waffle</a>
       <a href="#archive-delete" class="sidebar-link">Archive &amp; Delete</a>
       <a href="#csv-export" class="sidebar-link">CSV Export</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Public Buyer Flow</div>
+      <a href="#public-flow" class="sidebar-link">Overview</a>
+      <a href="#manual-claim" class="sidebar-link sub">Manual Claim</a>
+      <a href="#random-claim" class="sidebar-link sub">Random Spots</a>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-section-title">Managing Spots</div>
@@ -197,13 +204,18 @@
           <tr><td><strong>Reports</strong></td><td>All</td><td>Analytics — drought list, power buyers, monthly activity, spot velocity</td></tr>
           <tr><td><strong>Users</strong></td><td>All</td><td>Buyer Instagram handle registry with search and pagination</td></tr>
           <tr><td><strong>Admin Tools</strong> dropdown</td><td>admin, super_admin</td><td>Contains: Audit Log (admin+), Admin Users (super_admin only), Server Settings (super_admin only)</td></tr>
-          <tr><td><strong>Your display name</strong> (top-right)</td><td>All</td><td>Profile Settings, My Login History, About, Theme Toggle, Logout</td></tr>
+          <tr><td><strong>Your display name</strong> (top-right)</td><td>All</td><td>Profile Settings, My Login History, About, Logout</td></tr>
         </tbody>
       </table>
     </div>
     <div class="callout info">
       <div class="callout-title">ℹ️ Login History moved</div>
       My Login History is now accessed from the display name dropdown → <strong>My Login History</strong>, which links to <code>/admin/settings#login-history</code>. The full admin login history page (admin+ roles) is at <strong>Admin Tools → Login History</strong>.
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-title">🌙 Dark mode only (v0.1.19+)</div>
+      The light/dark theme toggle was removed in v0.1.19. The app now runs the warm dark theme exclusively, aligned with the projectsyrup.app design language. There is no longer a theme toggle in the display name dropdown.
     </div>
 
     <h3 id="display-name">How your name appears in the nav</h3>
@@ -255,6 +267,10 @@
           <tr>
             <td>spot_price</td><td>✅</td><td>Integer &gt; 0 (cents)</td>
             <td>Display only — Syrup does not process payments. Stored as an integer (e.g. <code>5</code> = $5). Used in revenue totals in reports.</td>
+          </tr>
+          <tr>
+            <td>item_count</td><td>❌</td><td>Integer 1–10 (default 1)</td>
+            <td><strong>Added in v0.1.20.</strong> Number of distinct items being waffled in a single drop. When &gt; 1, you draw that many winners (each on a distinct paid spot) instead of one. Useful when one waffle covers, e.g., 3 different pieces in a set.</td>
           </tr>
           <tr>
             <td>description</td><td>❌</td><td>Free text</td>
@@ -337,6 +353,53 @@
     <p>The export is also available without authentication at <code>GET /api/waffles/:slug/export</code>, so you can link buyers directly to a post-draw results file if you choose.</p>
     <p>Columns in the export: spot number, status, <code>claimed_by_handle</code>, claimed timestamp, paid timestamp.</p>
 
+    <!-- ══════════════════════════════════════════════════════ PUBLIC BUYER FLOW -->
+    <hr class="section-rule" />
+    <h2 id="public-flow">Public Buyer Experience</h2>
+    <p>
+      It's worth understanding what your buyers see, because it shapes how you set up waffles.
+      The public page lives at <code>/waffle/:slug</code> and shows: title, description, payment info,
+      Instagram media link buttons, an image thumbnail (if <code>image_url</code> is set), a fill
+      progress bar, and the spot grid.
+    </p>
+
+    <h3 id="manual-claim">Manual Claim Flow</h3>
+    <ol>
+      <li>Buyer taps one or more available spots in the grid — they highlight as selected.</li>
+      <li>They enter their Instagram handle in the input below the grid (with or without the <code>@</code>).</li>
+      <li>They tap <strong>Claim Spots</strong>. The selected spots transition to <em>Pending</em> for everyone watching the page (WebSocket broadcast).</li>
+      <li>Buyer sends payment to you via DM / Venmo / CashApp out-of-band.</li>
+      <li>You mark the spots paid from the manage view.</li>
+    </ol>
+
+    <h3 id="random-claim">Random Spot Selection</h3>
+    <div class="callout info">
+      <div class="callout-title">🎲 Added in v0.1.21-beta.0</div>
+      Public waffle pages now include a <strong>"Pick Random Spots"</strong> flow as an alternative to manual selection. Originally suggested by <a href="https://www.instagram.com/orangesojuicy/" target="_blank" rel="noopener">@OrangeSoJuicy</a> on Instagram.
+    </div>
+    <p>How it works for buyers:</p>
+    <ol>
+      <li>Buyer enters their Instagram handle.</li>
+      <li>Instead of tapping the grid, they enter a count (e.g. <code>5</code>) into the random-spots input and tap <strong>Pick Random Spots</strong>.</li>
+      <li>The server picks that many available spots at random under a transactional row lock and claims them in one shot.</li>
+      <li>The claimed spot numbers are returned to the buyer and broadcast via WebSocket to everyone watching.</li>
+    </ol>
+
+    <h4>Partial Fulfillment</h4>
+    <p>
+      If the buyer asks for more spots than are currently available, the server <strong>claims as many as it can</strong> and returns both <code>requested_count</code> and <code>claimed_count</code> in the response. There is no client-side maximum cap — the server is authoritative.
+    </p>
+
+    <h4>Mutual exclusivity with manual selection (v0.1.22-beta.0)</h4>
+    <p>
+      To prevent confusion, the random-claim controls are disabled while any manual spot is selected, and vice versa. A buyer either taps specific spots or asks for N random ones — not both in the same submission.
+    </p>
+
+    <h4>Same handle, same rate limits</h4>
+    <p>
+      Random claims hit the <code>POST /api/claims/random</code> endpoint, which reuses the same Instagram handle normalization, rate limiting, and WebSocket broadcasting as manual claims. The user registry is updated the same way.
+    </p>
+
     <!-- ══════════════════════════════════════════════════════ MANAGE VIEW -->
     <hr class="section-rule" />
     <h2 id="manage-view">Manage View</h2>
@@ -354,9 +417,13 @@
           <tr><td><strong>Available</strong></td><td>Spots no one has claimed yet</td></tr>
           <tr><td><strong>Pending</strong></td><td>Spots claimed but payment not confirmed</td></tr>
           <tr><td><strong>Paid</strong></td><td>Spots with confirmed payment</td></tr>
-          <tr><td><strong>Total</strong></td><td>Calculated revenue — paid spots × spot price (updates live)</td></tr>
+          <tr><td><strong>Total</strong></td><td>Calculated revenue — paid spots × spot price</td></tr>
         </tbody>
       </table>
+    </div>
+    <div class="callout tip">
+      <div class="callout-title">💡 Live count updates (v0.1.22-beta.0)</div>
+      All four tiles now update in real time as WebSocket spot events come in. Previously the counts only refreshed on page load — you no longer need to reload the page to see the current Available/Pending/Paid totals while a drop is in progress.
     </div>
 
     <h3 id="spot-grid">Spot Grid</h3>
@@ -425,30 +492,50 @@
 
     <!-- ══════════════════════════════════════════════════════ WINNER -->
     <h2 id="entering-winner">Winner Flow</h2>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ Updated in v0.1.19 + v0.1.20</div>
+      The free-text spot number input was replaced by a <strong>dropdown of paid spots</strong> (v0.1.19) so you can never enter an unpaid or invalid number. In v0.1.20, multi-item waffles can draw <strong>multiple winners</strong> at once — one per item.
+    </div>
+
     <p>
       The <strong>Set Winner</strong> section appears at the bottom of the manage page for active waffles.
-      Type the winning spot number and click <strong>Set Winner</strong>.
+      You pick the winning spot(s) from a dropdown listing every paid spot with its Instagram handle (e.g. <code>Spot #7 — @dani_boo_glass</code>), then click <strong>Set Winner</strong>.
     </p>
 
-    <p>What happens when a winner is set:</p>
+    <h3>Single-winner waffles (<code>item_count = 1</code>)</h3>
+    <p>The default case. Pick one spot from the dropdown. What happens when you click Set Winner:</p>
     <ul>
       <li>The winning spot's status is changed to <em>Winner</em>.</li>
       <li>All other spots with status <em>Paid</em> are updated to <em>Loser</em>.</li>
       <li>The winner's buyer stats (<code>total_wins</code>) increment by 1.</li>
       <li>All losing buyers' stats (<code>total_losses</code>) increment by 1.</li>
       <li>The waffle status changes from <em>Active</em> to <em>Completed</em>.</li>
+      <li>The waffle's <code>winning_spot_numbers</code> and <code>winning_instagram_handles</code> arrays are populated.</li>
       <li>A <code>waffle_completed</code> WebSocket broadcast fires to all connected clients.</li>
       <li>A winner banner appears at the top of the manage page.</li>
     </ul>
+
+    <h3>Multi-item waffles (<code>item_count &gt; 1</code>)</h3>
+    <p>
+      For waffles where you set <code>item_count</code> above 1 at creation, the Set Winner UI shows one dropdown per item.
+      You pick a distinct paid spot for each item, then click Set Winner once to commit all of them.
+    </p>
+    <ul>
+      <li>Each chosen spot is marked <em>Winner</em>.</li>
+      <li>All remaining paid spots are marked <em>Loser</em>.</li>
+      <li>Each winner's <code>total_wins</code> increments by 1 (so picking the same buyer twice is intentionally not allowed — dropdown values must be distinct).</li>
+      <li>The public waffle page renders a winner list, one row per item.</li>
+    </ul>
     <p>Recorded in the audit log as <span class="action-code">set_winner</span>.</p>
 
-    <h3 id="change-clear-winner">Changing or Clearing the Winner</h3>
-    <p>After a winner is set, the manage page shows two additional controls:</p>
+    <h3 id="change-clear-winner">Changing or Clearing Winners</h3>
+    <p>After winners are set, the manage page swaps the Set Winner UI for <strong>Change Winner</strong> and <strong>Clear Winner</strong> controls.</p>
 
     <h4>Clear Winner</h4>
     <p>
-      Removes the current winner. The winning spot reverts to <em>Active</em>. All loser spots revert to <em>Paid</em>.
-      Buyer win/loss stats are fully recalculated for all affected spots on the waffle.
+      Removes <strong>all</strong> winners on the waffle. Every winning spot reverts to <em>Paid</em>. All loser spots revert to <em>Paid</em>.
+      Buyer win/loss stats are fully recalculated for all affected spots.
       The waffle status reverts to <em>Active</em>.
       Fires a <code>winner_cleared</code> WebSocket broadcast.
       Recorded as <span class="action-code">clear_winner</span>.
@@ -456,8 +543,8 @@
 
     <h4>Change Winner</h4>
     <p>
-      Reassigns the win to a different spot number without clearing first.
-      The old winning spot reverts to <em>Paid</em>, the new spot becomes <em>Winner</em>, and all loser spots are re-evaluated.
+      Reassigns one or more winners. The dropdowns are pre-populated with the current winning spots; change any of them to a different paid spot and click Change Winner.
+      Old winning spots that are no longer in the selection revert to <em>Paid</em>; new selections become <em>Winner</em>; loser status is recomputed across all paid spots.
       Buyer stats are recalculated for all affected spots.
       Fires a <code>winner_changed</code> WebSocket broadcast.
       Recorded as <span class="action-code">change_winner</span>.
@@ -465,7 +552,7 @@
 
     <div class="callout warn">
       <div class="callout-title">⚠️ Stats recalculation is synchronous</div>
-      Changing or clearing a winner triggers an immediate full recalculation of buyer win/loss stats for all spots on the waffle.
+      Changing or clearing winners triggers an immediate full recalculation of buyer win/loss stats for all spots on the waffle.
       This is a synchronous database operation — on very large waffles (100+ spots) there may be a brief delay before the API responds.
     </div>
 

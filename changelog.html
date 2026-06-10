@@ -68,6 +68,7 @@
     <a href="admin-manual.html">Admin Manual</a>
     <a href="deployment.html">Deployment</a>
     <a href="api-reference.html">API Reference</a>
+    <a href="beta-testers.html">Beta Testers</a>
     <a href="changelog.html" class="active">Changelog</a>
   </nav>
 </header>
@@ -76,6 +77,10 @@
   <aside class="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-section-title">Releases</div>
+      <a href="#v0.1.22-beta.0" class="sidebar-link">v0.1.22-beta.0 🧪</a>
+      <a href="#v0.1.21-beta.0" class="sidebar-link">v0.1.21-beta.0 🧪</a>
+      <a href="#v0.1.20" class="sidebar-link">v0.1.20</a>
+      <a href="#v0.1.19" class="sidebar-link">v0.1.19</a>
       <a href="#v0.1.18" class="sidebar-link">v0.1.18</a>
       <a href="#v0.1.17" class="sidebar-link">v0.1.17</a>
       <a href="#v0.1.16" class="sidebar-link">v0.1.16</a>
@@ -102,6 +107,116 @@
       <h1>Changelog</h1>
       <p class="subtitle">All notable changes to Project Syrup, newest first.</p>
     </div>
+
+    <!-- v0.1.22-beta.0 -->
+    <div class="release" id="v0.1.22-beta.0">
+      <div class="release-header">
+        <h2>v0.1.22-beta.0 🧪</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.22-beta.0" class="release-tag">v0.1.22-beta.0</a>
+        <span class="release-date">2026-06-10</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Live Stats Counter Updates</strong> — Manage page stats tiles (Available / Pending / Paid / Total) now update in real time as WebSocket spot events come in, without requiring a page reload.</li>
+        </ul>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-changed">Changed</div>
+        <ul class="change-list">
+          <li><strong>Mutually-Exclusive Claim Controls</strong> — On the public waffle page, the random-claim count input is disabled while manual spots are selected and vice versa. Prevents confusing dual-submission attempts.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.21-beta.0 -->
+    <div class="release" id="v0.1.21-beta.0">
+      <div class="release-header">
+        <h2>v0.1.21-beta.0 🧪</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.21-beta.0" class="release-tag">v0.1.21-beta.0</a>
+        <span class="release-date">2026-06-10</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Random Spot Selection</strong> — Public waffle pages now include a "Pick Random Spots" flow so buyers can enter a spot count and let the app claim available spots for them automatically.</li>
+          <li><strong>Random Claim API</strong> — New <code>POST /api/claims/random</code> endpoint reuses existing claim rate limiting, Instagram handle normalization, transactional row locking, and WebSocket spot updates.</li>
+          <li><strong>Partial Fulfillment</strong> — Random claims claim as many available spots as possible when the requested count is higher than remaining availability, then return both claimed and requested counts in the response.</li>
+        </ul>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-changed">Changed</div>
+        <ul class="change-list">
+          <li><strong>Shared Handle Input</strong> — Random claims share the same Instagram handle input as manual spot selection while keeping the two claim actions independent.</li>
+          <li><strong>Feature Attribution</strong> — Random spot selection is credited as a community UI feature idea from <a href="https://www.instagram.com/orangesojuicy/" target="_blank" rel="noopener">@OrangeSoJuicy</a> on Instagram. Jinkies.</li>
+        </ul>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-fixed">Fixed</div>
+        <ul class="change-list">
+          <li><strong>No Hard Random Count Limit</strong> — Removed the client-side maximum count so the server-side partial-fulfillment behavior remains authoritative.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.20 -->
+    <div class="release" id="v0.1.20">
+      <div class="release-header">
+        <h2>v0.1.20</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.20" class="release-tag">v0.1.20</a>
+        <span class="release-date">2026-06-04</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Multiple Items per Waffle</strong> — New <code>item_count</code> field on waffles (1–10). When greater than 1, the Set Winner UI lets you pick one paid spot per item to draw multiple winners simultaneously.</li>
+          <li><strong>Multiple Winner Support</strong> — Waffle model now stores <code>winning_spot_numbers</code> and <code>winning_instagram_handles</code> as JSONB arrays. Existing single-winner data is backfilled by migration 012.</li>
+          <li><strong>Multi-Winner UI</strong> — Manage page renders one spot dropdown per item, displays a winner list on the public page, and supports dynamic add/change/clear of winners post-draw.</li>
+        </ul>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-changed">Changed</div>
+        <ul class="change-list">
+          <li><strong>Winner Endpoints Take Arrays</strong> — <code>POST /winner</code> and <code>POST /change-winner</code> now expect <code>{"winning_spot_numbers": [...]}</code> instead of a single <code>spot_number</code>.</li>
+          <li><strong>Backup &amp; Smoke-Test Scripts</strong> — Added operational scripts and synced documentation version references to v0.1.20.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
+
+    <!-- v0.1.19 -->
+    <div class="release" id="v0.1.19">
+      <div class="release-header">
+        <h2>v0.1.19</h2>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.19" class="release-tag">v0.1.19</a>
+        <span class="release-date">2026-06-04</span>
+      </div>
+
+      <div class="callout warn" style="margin: 12px 0;">
+        <div class="callout-title">⚠️ Upgrade note: migrations are now embedded</div>
+        The app no longer reads migration files from the filesystem. The <code>./backend/migrations:/app/migrations:ro</code> volume mount in your <code>docker-compose.prod.yml</code> can be removed (it is now harmless but unnecessary). See <a href="deployment.html#migrations">Deployment → Database Migrations</a>.
+      </div>
+
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Embedded Migrations</strong> — SQL migration files are compiled into the binary via <code>//go:embed</code>. No filesystem mount or file-sync step required at deploy time.</li>
+          <li><strong>Winner Dropdown</strong> — The Set Winner field on the waffle manage page is now a dropdown listing all paid spots with their Instagram handles, replacing the free-text spot number input.</li>
+        </ul>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-changed">Changed</div>
+        <ul class="change-list">
+          <li><strong>Tag-Driven CI/CD</strong> — Release type now follows tag format. Tags matching <code>v*.*.*-*</code> (e.g. <code>v0.1.19-rc.1</code>) produce a GitHub pre-release; plain <code>v*.*.*</code> tags produce a stable release and move <code>latest</code> + <code>major.minor</code> Docker tags.</li>
+          <li><strong>Footer Version</strong> — Docker build now correctly stamps the image with the git tag so the footer shows the real version instead of always displaying <code>dev</code>.</li>
+          <li><strong>Dark Theme Only</strong> — Light/dark toggle removed. The app now runs the warm dark theme exclusively, aligned with the projectsyrup.app design language.</li>
+          <li><strong>Re-theme</strong> — Base colors updated from purple-grey to warm dark brown to match projectsyrup.app (amber accent, warm cream text, glass header).</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
 
     <!-- v0.1.17 -->
     <div class="release" id="v0.1.17">

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beta Testers — Project Syrup Wiki</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    .rule {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px 18px 64px;
+      margin: 14px 0;
+      position: relative;
+      transition: border-color .15s ease;
+    }
+    .rule:hover { border-color: var(--border-hover); }
+    .rule-num {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      color: #0a0b12;
+      font-weight: 700;
+      font-size: .9rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .rule p { color: var(--text); margin: 0; }
+    .rule p + p { margin-top: 6px; color: var(--text-dim); font-size: .9rem; }
+    .vibes {
+      background: linear-gradient(135deg, rgba(245,158,11,0.06), rgba(194,65,12,0.06));
+      border: 1px solid rgba(245,158,11,0.15);
+      border-radius: var(--radius-lg);
+      padding: 22px 26px;
+      margin: 28px 0;
+    }
+    .vibes p { color: var(--text); font-size: 1.05rem; line-height: 1.6; }
+    .leprechaun {
+      font-size: .85rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <span class="logo-emoji">🧇</span>
+    <div><span style="display:block">Waffle Wiki</span><span class="logo-sub">Project Syrup</span></div>
+  </a>
+  <nav class="topbar-nav">
+    <a href="index.html">Home</a>
+    <a href="getting-started.html">Getting Started</a>
+    <a href="admin-manual.html">Admin Manual</a>
+    <a href="deployment.html">Deployment</a>
+    <a href="api-reference.html">API Reference</a>
+    <a href="beta-testers.html" class="active">Beta Testers</a>
+    <a href="changelog.html">Changelog</a>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Beta Testers</div>
+      <a href="#welcome" class="sidebar-link">Welcome</a>
+      <a href="#rules" class="sidebar-link">House Rules</a>
+      <a href="#how-to-help" class="sidebar-link">How to Help</a>
+      <a href="#reporting" class="sidebar-link">Reporting Bugs</a>
+      <a href="#current-beta" class="sidebar-link">Current Beta Build</a>
+      <a href="#contact" class="sidebar-link">Getting in Touch</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Quick Links</div>
+      <a href="getting-started.html" class="sidebar-link">Getting Started</a>
+      <a href="admin-manual.html" class="sidebar-link">Admin Manual</a>
+      <a href="changelog.html" class="sidebar-link">Changelog</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="page-header">
+      <h1>Beta Testers</h1>
+      <p class="subtitle">The house rules, the vibes, and how to help.</p>
+    </div>
+
+    <h2 id="welcome">Welcome — read this first</h2>
+    <div class="vibes">
+      <p>
+        First off, thank you. Seriously. Beta testing is unpaid work and you're doing it anyway —
+        that's the only reason this project gets better. Before anything else, please skim the
+        rules below. They set the tone for how this whole thing works.
+      </p>
+    </div>
+
+    <h2 id="rules">House Rules</h2>
+
+    <div class="rule">
+      <span class="rule-num">1</span>
+      <p><strong>I'm in pain 24/7. If I'm being an ass, say so.</strong> I apologize ahead of time.</p>
+      <p>Chronic pain has a way of leaking into how I write things. If a reply comes across as short, sharp, or grumpy — call it out. I'd rather know and clear the air than have you assume the worst.</p>
+    </div>
+
+    <div class="rule">
+      <span class="rule-num">2</span>
+      <p><strong>If you're being an ass, you may get warned, you may get banned.</strong> Depends on why.</p>
+      <p>One bad day is fine — we all have them (see Rule 1). Repeated hostility, harassment, or making the space worse for other testers is not. Warnings come first, bans come if the warning didn't land.</p>
+    </div>
+
+    <div class="rule">
+      <span class="rule-num">3</span>
+      <p><strong>This is done out of pocket, on people's free time.</strong> If we don't respond right away, just assume we were gravely attacked by a leprechaun wearing a purple pimp suit carrying a titanium cane — and hope we can respond when able.</p>
+      <p class="leprechaun">Yes, the leprechaun is canon. No, we will not be taking questions about the titanium cane.</p>
+    </div>
+
+    <div class="rule">
+      <span class="rule-num">4</span>
+      <p><strong>The only dumb question is the one not asked</strong> — or the one answered with a simple Google search. =P</p>
+      <p>Ask anything. Genuinely. The worst that happens is we link you to the docs page that already covers it, and now you know it exists.</p>
+    </div>
+
+    <div class="rule">
+      <span class="rule-num">5</span>
+      <p><strong>Your level of involvement can be as much or as little as you want.</strong> Just tell us if you want more or less (see Rule 4).</p>
+      <p>Some testers run weekly waffles and file detailed reports. Some lurk and pop in once a month. Both are completely valid. Just let us know roughly where you're at so we don't either ghost you or spam you.</p>
+    </div>
+
+    <div class="rule">
+      <span class="rule-num">6</span>
+      <p><strong>I hate creating documentation.</strong> Expect this list to expand at any time.</p>
+      <p>If a rule shows up here it's because something happened that made writing it down feel less painful than explaining it again. Check back occasionally.</p>
+    </div>
+
+    <h2 id="how-to-help">How to Help</h2>
+    <p>The most useful things beta testers can do, in rough order of impact:</p>
+    <ol>
+      <li><strong>Run a real waffle on a beta build.</strong> Nothing finds bugs faster than actual buyers tapping actual spots.</li>
+      <li><strong>Report what broke and what you expected instead.</strong> Even one-line reports help. Screenshots help more.</li>
+      <li><strong>Note anything that felt awkward</strong>, even if it technically "worked." Friction is a bug too.</li>
+      <li><strong>Suggest features</strong> — especially small ones. The <em>random spot picker</em> in v0.1.21-beta started as an Instagram DM from <a href="https://www.instagram.com/orangesojuicy/" target="_blank" rel="noopener">@OrangeSoJuicy</a>.</li>
+      <li><strong>Test on Instagram's in-app browser.</strong> It behaves differently from desktop Chrome. If you can poke a build inside an IG DM, that's gold.</li>
+    </ol>
+
+    <h2 id="reporting">Reporting Bugs</h2>
+    <p>When something goes wrong, the most helpful report includes:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Field</th><th>Why it matters</th></tr></thead>
+        <tbody>
+          <tr><td><strong>What you were doing</strong></td><td>Helps us reproduce it. "Tried to claim spots 4 and 7 as a buyer" beats "claim broke."</td></tr>
+          <tr><td><strong>What you expected to happen</strong></td><td>Sometimes the behavior is intentional and the expectation is the actual bug to fix.</td></tr>
+          <tr><td><strong>What actually happened</strong></td><td>Error message text, blank screens, wrong numbers — anything visible.</td></tr>
+          <tr><td><strong>Build version</strong></td><td>Look at the footer — it shows the version (e.g. <code>v0.1.22-beta.0</code>). Critical for knowing if a fix already shipped.</td></tr>
+          <tr><td><strong>Browser / device</strong></td><td>"Instagram in-app on iPhone" vs "Chrome on a laptop" are basically different platforms.</td></tr>
+          <tr><td><strong>Screenshot</strong> (if visual)</td><td>Worth a thousand words.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 Don't worry about being technical</div>
+      "I tapped the button and nothing happened" is a useful report. We can dig from there. Don't sit on a bug because you can't describe it precisely.
+    </div>
+
+    <h2 id="current-beta">Current Beta Build</h2>
+    <p>The latest pre-release is <strong>v0.1.22-beta.0</strong> (June 10, 2026). Pull it with:</p>
+    <pre><code>WAFFLE_VERSION=v0.1.22-beta.0 docker compose -f docker-compose.prod.yml up -d</code></pre>
+    <p>What to poke at specifically:</p>
+    <ul>
+      <li><strong>Random spot selection</strong> on the public waffle page — does the "Pick Random Spots" flow feel right? Edge cases when requested count exceeds available?</li>
+      <li><strong>Live stats counter</strong> on the manage page — does the available/pending/paid count update smoothly when other people claim or pay?</li>
+      <li><strong>Multiple winners</strong> on multi-item waffles — does the winner dropdown / selection feel reasonable when there are 3+ items?</li>
+    </ul>
+    <p>See the <a href="changelog.html#v0.1.22-beta.0">changelog</a> for the full list of recent changes.</p>
+
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Beta means beta</div>
+      Don't run a beta build on a high-stakes waffle with real buyers and real money unless you're prepared to handle weirdness. If you're going to test on a live drop, stick to a small, low-pressure one first.
+    </div>
+
+    <h2 id="contact">Getting in Touch</h2>
+    <ul>
+      <li><strong>GitHub issues</strong> — <a href="https://github.com/notfixingit3/waffle/issues" target="_blank" rel="noopener">github.com/notfixingit3/waffle/issues</a> — the primary place for bug reports and feature suggestions. Public, searchable, and won't get lost in DMs.</li>
+      <li><strong>Instagram DMs</strong> — fine for quick "hey is this a known issue?" pings. Slower for anything that needs back-and-forth.</li>
+      <li><strong>Project Syrup site</strong> — <a href="https://projectsyrup.app" target="_blank" rel="noopener">projectsyrup.app</a> — for general project context.</li>
+    </ul>
+
+    <p style="margin-top:32px; color: var(--text-muted); font-style: italic;">Thanks for being here. The leprechaun salutes you.</p>
+  </main>
+</div>
+
+<footer>
+  Waffle Wiki &mdash; part of <a href="https://projectsyrup.app" target="_blank" rel="noopener">Project Syrup</a> &mdash;
+  <a href="https://github.com/notfixingit3/waffle" target="_blank" rel="noopener">github.com/notfixingit3/waffle</a> &mdash;
+  MIT Licensed. No tracking. No bullshit.
+</footer>
+
+</body>
+</html>

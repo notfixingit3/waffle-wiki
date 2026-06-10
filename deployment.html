@@ -20,6 +20,7 @@
     <a href="admin-manual.html">Admin Manual</a>
     <a href="deployment.html" class="active">Deployment</a>
     <a href="api-reference.html">API Reference</a>
+    <a href="beta-testers.html">Beta Testers</a>
     <a href="changelog.html">Changelog</a>
   </nav>
 </header>
@@ -65,7 +66,7 @@
     <p>Create a <code>.env</code> file in the project root (copy from <code>.env.example</code>):</p>
 
     <pre><code># Docker image version — pin this for reproducible deploys
-WAFFLE_VERSION=v0.1.18
+WAFFLE_VERSION=v0.1.20
 
 # PostgreSQL connection string
 DATABASE_URL=postgres://syrup:your_secure_password@postgres:5432/syrup?sslmode=disable
@@ -83,7 +84,7 @@ ADMIN_PASSWORD=your-secure-admin-password
       <table>
         <thead><tr><th>Variable</th><th>Required</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><code>WAFFLE_VERSION</code></td><td>✅</td><td>Docker image tag to pull. Use a pinned version for production (e.g. <code>v0.1.18</code>). Use <code>latest</code> only if you want auto-tracking.</td></tr>
+          <tr><td><code>WAFFLE_VERSION</code></td><td>✅</td><td>Docker image tag to pull. Use a pinned stable version for production (e.g. <code>v0.1.20</code>). Use <code>latest</code> only if you want auto-tracking. For beta builds use the exact pre-release tag (e.g. <code>v0.1.22-beta.0</code>).</td></tr>
           <tr><td><code>DATABASE_URL</code></td><td>✅</td><td>Full PostgreSQL connection string including credentials, host, port, and database name.</td></tr>
           <tr><td><code>JWT_SECRET</code></td><td>✅</td><td>Random secret for signing admin session tokens. Minimum 32 characters. Changing this invalidates all active sessions.</td></tr>
           <tr><td><code>ADMIN_PASSWORD</code></td><td>✅</td><td>Password for the default <code>admin</code> account created on first run. Change immediately after first login.</td></tr>
@@ -178,24 +179,44 @@ fly deploy</code></pre>
     <h2 id="release-channels">Release Channels</h2>
     <p>Pre-built images are published to <code>ghcr.io/notfixingit3/waffle</code> for <code>linux/amd64</code> and <code>linux/arm64</code>.</p>
 
+    <div class="callout info">
+      <div class="callout-title">ℹ️ Tag-driven release workflow (v0.1.19+)</div>
+      The release type is now determined by the git tag format:
+      <ul style="margin-top:6px">
+        <li><code>v*.*.*</code> (e.g. <code>v0.1.20</code>) — produces a <strong>stable</strong> GitHub Release and moves the <code>latest</code> and <code>major.minor</code> (e.g. <code>v0.1</code>) Docker image tags.</li>
+        <li><code>v*.*.*-*</code> (e.g. <code>v0.1.22-beta.0</code>, <code>v0.1.19-rc.1</code>) — produces a GitHub <strong>pre-release</strong> with only the versioned Docker tag. Does <strong>not</strong> move <code>latest</code>.</li>
+      </ul>
+      Old releases are never auto-deleted.
+    </div>
+
     <div class="table-wrap">
       <table>
         <thead><tr><th>Channel</th><th>Tag</th><th>Description</th></tr></thead>
         <tbody>
           <tr>
-            <td><strong>Pinned</strong></td>
-            <td><code>v0.1.18</code></td>
+            <td><strong>Pinned stable</strong></td>
+            <td><code>v0.1.20</code></td>
             <td>A specific stable release. <strong>Recommended for production.</strong> Fully reproducible.</td>
           </tr>
           <tr>
-            <td><strong>Stable</strong></td>
+            <td><strong>Stable rolling</strong></td>
             <td><code>latest</code></td>
-            <td>Tracks the latest stable release from the <code>main</code> branch. Auto-updates on pull.</td>
+            <td>Tracks the latest stable release tag. Auto-updates on <code>docker compose pull</code>. Never points at a pre-release.</td>
+          </tr>
+          <tr>
+            <td><strong>Minor rolling</strong></td>
+            <td><code>v0.1</code></td>
+            <td>Tracks the latest stable patch within a minor version. Good middle ground between pinned and <code>latest</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Pinned pre-release</strong></td>
+            <td><code>v0.1.22-beta.0</code></td>
+            <td>A specific beta/RC build. Use for <a href="beta-testers.html">beta testing</a> — not for production drops with real money.</td>
           </tr>
           <tr>
             <td><strong>Dev</strong></td>
             <td><code>dev</code></td>
-            <td>Tracks the <code>dev</code> branch. For staging and testing only — may be unstable.</td>
+            <td>Tracks the <code>dev</code> branch HEAD. Bleeding edge — may break at any time.</td>
           </tr>
         </tbody>
       </table>
@@ -203,7 +224,7 @@ fly deploy</code></pre>
 
     <div class="callout tip">
       <div class="callout-title">💡 Pin in production</div>
-      Always pin to a specific version tag in production (e.g. <code>WAFFLE_VERSION=v0.1.18</code>).
+      Always pin to a specific stable version tag in production (e.g. <code>WAFFLE_VERSION=v0.1.20</code>).
       Using <code>latest</code> means a <code>docker compose pull</code> could silently update your app.
     </div>
 
@@ -256,10 +277,23 @@ server {
     <!-- ════════════════════════════ MIGRATIONS -->
     <h2 id="migrations">Database Migrations</h2>
     <p>Migrations run <strong>automatically</strong> every time the backend container starts. They are safe to run on an already-migrated database (idempotent via migration tracking).</p>
+
+    <div class="callout info">
+      <div class="callout-title">📦 Migrations are embedded (v0.1.19+)</div>
+      Since v0.1.19, SQL migration files are compiled directly into the Go binary via <code>//go:embed</code>. You no longer need to mount the <code>backend/migrations/</code> directory as a volume, and you no longer need to sync the migrations folder to your server before deploying.
+    </div>
+
+    <h3>Upgrading from v0.1.18 or earlier</h3>
+    <p>If your <code>docker-compose.prod.yml</code> has this volume mount, you can remove it — it's no longer needed:</p>
+    <pre><code># Remove this — no longer required
+volumes:
+  - ./backend/migrations:/app/migrations:ro</code></pre>
+    <p>The mount is harmless if left in place (the app simply ignores the filesystem), but removing it keeps your compose file clean.</p>
+
     <p>To run migrations manually (e.g. after a restore):</p>
     <pre><code>docker compose exec app ./main migrate</code></pre>
 
-    <p>Migration files live in <code>backend/migrations/</code> and are numbered sequentially (<code>001_</code>, <code>002_</code>, …). Each has an <code>.up.sql</code> and a <code>.down.sql</code>.</p>
+    <p>Migration files live in <code>backend/migrations/</code> and are numbered sequentially (<code>001_</code>, <code>002_</code>, …). Each has an <code>.up.sql</code> and a <code>.down.sql</code>. They are bundled into the binary at build time.</p>
 
     <!-- ════════════════════════════ BACKUP -->
     <h2 id="backup">Backup &amp; Restore</h2>
