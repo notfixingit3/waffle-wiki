@@ -153,6 +153,12 @@
 
     <div class="rule">
       <span class="rule-num">9</span>
+      <p><strong>You don't have to install anything.</strong> We have a dev site for testing — you can poke at beta builds in the browser without touching Docker, Compose, or a terminal. The self-hosted Docker setup is there if you want it, but it's 100% optional. Ask for the dev site link.</p>
+      <p>Beta testing is most useful when it's a mix of technical folks <em>and</em> the artists/collectors who actually run waffles in the wild. If you've never run <code>docker compose</code> in your life, you're still exactly the kind of tester we want — the dev site is for you.</p>
+    </div>
+
+    <div class="rule">
+      <span class="rule-num">10</span>
       <p><strong>I hate creating documentation.</strong> Expect this list to expand at any time.</p>
       <p>If a rule shows up here it's because something happened that made writing it down feel less painful than explaining it again. Check back occasionally.</p>
     </div>
@@ -189,9 +195,21 @@
     </div>
 
     <h2 id="current-beta">Current Beta Build</h2>
-    <p>The latest pre-release is <strong>v0.1.22-beta.0</strong> (June 10, 2026). Pull it with:</p>
+    <p>The latest pre-release is <strong>v0.1.22-beta.0</strong> (June 10, 2026). There are two ways to test it:</p>
+
+    <h3>🌐 Easiest: use the dev site</h3>
+    <p>
+      We host a dev site that always runs the current beta build. No installation, no Docker, no terminal.
+      Open it in your browser — including inside the Instagram app — and you're in.
+      Ask for the link (see <a href="#rules">Rule 9</a>).
+    </p>
+
+    <h3>🐳 Self-hosted: pull the Docker image</h3>
+    <p>If you want to run your own copy (great for poking at the admin/database side, or testing behind a real domain):</p>
     <pre><code>WAFFLE_VERSION=v0.1.22-beta.0 docker compose -f docker-compose.prod.yml up -d</code></pre>
-    <p>What to poke at specifically:</p>
+    <p>See the <a href="getting-started.html">Getting Started</a> and <a href="deployment.html">Deployment</a> guides for the full setup.</p>
+
+    <h3>What to poke at specifically</h3>
     <ul>
       <li><strong>Random spot selection</strong> on the public waffle page — does the "Pick Random Spots" flow feel right? Edge cases when requested count exceeds available?</li>
       <li><strong>Live stats counter</strong> on the manage page — does the available/pending/paid count update smoothly when other people claim or pay?</li>
