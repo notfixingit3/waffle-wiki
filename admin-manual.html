@@ -75,12 +75,15 @@
       <a href="#change-clear-winner" class="sidebar-link sub">Change / Clear</a>
     </div>
     <div class="sidebar-section">
-      <div class="sidebar-section-title">Admin Tools</div>
+      <div class="sidebar-section-title">Management</div>
       <a href="#admin-management" class="sidebar-link">Admin Management</a>
       <a href="#create-admin" class="sidebar-link sub">Create Admin</a>
       <a href="#change-role" class="sidebar-link sub">Change Role</a>
       <a href="#reset-others-password" class="sidebar-link sub">Reset Password</a>
       <a href="#deactivate-admin" class="sidebar-link sub">Deactivate</a>
+      <a href="#payment-methods" class="sidebar-link">Payment Methods</a>
+      <a href="#payment-methods-crud" class="sidebar-link sub">CRUD &amp; Soft Delete</a>
+      <a href="#payment-methods-waffle" class="sidebar-link sub">Selecting on Waffles</a>
       <a href="#reports" class="sidebar-link">Reports</a>
       <a href="#drought-list" class="sidebar-link sub">Drought List</a>
       <a href="#power-buyers" class="sidebar-link sub">Power Buyers</a>
@@ -154,6 +157,7 @@
           <tr><td>Reset another admin's password</td><td>✅</td><td>❌</td><td>❌</td></tr>
           <tr><td>System settings</td><td>✅</td><td>❌</td><td>❌</td></tr>
           <tr><td>View users registry (top-level nav)</td><td>✅</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Manage payment methods <span class="badge badge-admin" style="margin-left:6px">v0.1.22</span></td><td>✅</td><td>✅</td><td>❌</td></tr>
         </tbody>
       </table>
     </div>
@@ -203,14 +207,14 @@
           <tr><td><strong>New Waffle</strong></td><td>All</td><td>Shortcut to the create waffle form</td></tr>
           <tr><td><strong>Reports</strong></td><td>All</td><td>Analytics — drought list, power buyers, monthly activity, spot velocity</td></tr>
           <tr><td><strong>Users</strong></td><td>All</td><td>Buyer Instagram handle registry with search and pagination</td></tr>
-          <tr><td><strong>Admin Tools</strong> dropdown</td><td>admin, super_admin</td><td>Contains: Audit Log (admin+), Admin Users (super_admin only), Server Settings (super_admin only)</td></tr>
+          <tr><td><strong>Management</strong> dropdown</td><td>admin, super_admin</td><td>Renamed from "Admin Tools" in v0.1.22. Contains: Audit Log (admin+), Payment Methods (admin+), Admin Users (super_admin only), Server Settings (super_admin only)</td></tr>
           <tr><td><strong>Your display name</strong> (top-right)</td><td>All</td><td>Profile Settings, My Login History, About, Logout</td></tr>
         </tbody>
       </table>
     </div>
     <div class="callout info">
       <div class="callout-title">ℹ️ Login History moved</div>
-      My Login History is now accessed from the display name dropdown → <strong>My Login History</strong>, which links to <code>/admin/settings#login-history</code>. The full admin login history page (admin+ roles) is at <strong>Admin Tools → Login History</strong>.
+      My Login History is now accessed from the display name dropdown → <strong>My Login History</strong>, which links to <code>/admin/settings#login-history</code>. The full admin login history page (admin+ roles) still exists at <code>/admin/login-history</code> but is no longer in the dropdown menu — open it directly or via the Settings page tab.
     </div>
 
     <div class="callout warn">
@@ -277,8 +281,8 @@
             <td>Optional subtitle shown below the title on the manage page and public waffle page.</td>
           </tr>
           <tr>
-            <td>payment_info</td><td>❌</td><td>Free text</td>
-            <td>Optional payment instructions (e.g. Venmo/CashApp username). Displayed to buyers on the public page.</td>
+            <td>payment_methods[]</td><td>❌</td><td>UUID array</td>
+            <td><strong>Replaces <code>payment_info</code> as of v0.1.22.</strong> Multi-select checkboxes pick from your stored payment methods (Venmo, PayPal, CashApp, Zelle). Selected methods are grouped by type and rendered with icons + clickable links on the public waffle page. Manage the pool under <a href="#payment-methods">Management → Payment Methods</a>.</td>
           </tr>
           <tr>
             <td>instagram_media_links[]</td><td>❌</td><td>URL array</td>
@@ -561,7 +565,7 @@
     <h2 id="admin-management">Admin User Management</h2>
     <p>
       Available to <span class="badge badge-super">super_admin</span> only.
-      Navigate to <strong>Admin Tools → Admin Users</strong>.
+      Navigate to <strong>Management → Admin Users</strong>.
       The page shows a table of all admin accounts — active and inactive — with username, email, role, status, and last login.
       An inline role-permissions guide is shown at the top of the page (collapsed on mobile, always visible on desktop) to help you choose the right role when creating a new admin.
     </p>
@@ -609,6 +613,63 @@
     <p>Click <strong>Deactivate</strong> on an admin row and confirm your password. The account is set to <code>active = false</code>. Deactivated admins cannot log in — authentication returns an "account deactivated" error even with a correct password. Their audit history, login history, and any waffles they created are fully preserved.</p>
     <p>To reactivate a deactivated admin, use the API directly (<code>PATCH /api/admin/admins/:id</code> with <code>{"active": true}</code>) — there is no UI reactivation button at this time.</p>
     <p>Recorded as <span class="action-code">deactivate_admin</span>.</p>
+
+    <!-- ══════════════════════════════════════════════════════ PAYMENT METHODS -->
+    <hr class="section-rule" />
+    <h2 id="payment-methods">Payment Methods <span class="badge badge-admin" style="margin-left:8px;vertical-align:middle;">v0.1.22</span></h2>
+    <p>
+      Added in v0.1.22, the payment methods feature replaces the free-text <code>payment_info</code> field on waffles with a structured pool of stored payment options.
+      You maintain one shared list at <code>/admin/payment-methods</code>; each waffle picks which methods to display via multi-select checkboxes on the create/edit form.
+      Public waffle pages render the selected methods grouped by type, with icons (Venmo, PayPal, CashApp, Zelle) and clickable links.
+    </p>
+    <p>Available to <span class="badge badge-admin">admin</span> and <span class="badge badge-super">super_admin</span>. Navigate to <strong>Management → Payment Methods</strong>.</p>
+
+    <h3 id="payment-methods-crud">Managing the Pool (CRUD &amp; Soft Delete)</h3>
+    <p>The Payment Methods page lists every stored payment option. Each row has these fields:</p>
+    <div class="table-wrap">
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>type</td><td>One of <code>venmo</code>, <code>paypal</code>, <code>cashapp</code>, <code>zelle</code>. Determines which icon and link format the public page uses.</td></tr>
+          <tr><td>display_name</td><td>The label shown to buyers (e.g. <em>"Venmo — @notfixingit"</em> or <em>"PayPal — Backup"</em>). Use this if you have multiple accounts of the same type.</td></tr>
+          <tr><td>handle_or_url</td><td>The actual handle (<code>@notfixingit</code>) or a full URL. The public page builds a clickable link from this.</td></tr>
+          <tr><td>is_active</td><td>Soft-delete flag. Inactive methods stay in the database (preserving history on past waffles) but no longer appear in the multi-select on new/edited waffles.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Create / Update</h4>
+    <p>Click <strong>Add Payment Method</strong> to create one, or click any row's edit control to update an existing entry. Type, display name, and handle/URL are all required.</p>
+
+    <h4>Soft delete (deactivate)</h4>
+    <p>
+      Click <strong>Deactivate</strong> on a row to mark it inactive. The record is preserved so past waffles that referenced it still render correctly. If the method is currently selected on one or more active waffles, you get a usage warning before the deactivation goes through — that's the system telling you the deactivation will hide an option that's currently in use.
+    </p>
+    <p>To reactivate a method later, the equivalent API call sets <code>is_active = true</code>; there is currently no dedicated reactivate button in the UI.</p>
+
+    <h3 id="payment-methods-waffle">Selecting Methods on a Waffle</h3>
+    <p>
+      On the create-waffle and edit-waffle forms, the old <code>payment_info</code> textarea is gone.
+      In its place is a <strong>multi-select checkbox list</strong> of every active payment method, grouped by type.
+      Check the ones you want this waffle to advertise; uncheck the ones you don't.
+    </p>
+    <p>The selected methods are stored as an association — not a copy — so editing a payment method's display name or handle later will update every waffle that uses it. (This is usually what you want; if you need a one-off variant, create a new payment method with a distinct display name.)</p>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 Why this is better than the old free-text field</div>
+      No more typos in your Venmo handle on a specific waffle. No more inconsistent formatting between drops. And the public page can use real icons and proper deep links to each payment app, which is a much smoother buyer experience inside the IG in-app browser.
+    </div>
+
+    <h4>What buyers see</h4>
+    <p>
+      On the public waffle page, the payment section now renders one row per active method on this waffle, with:
+    </p>
+    <ul>
+      <li>An icon for the payment type (Venmo, PayPal, CashApp, or Zelle)</li>
+      <li>The display name</li>
+      <li>The handle or a clickable link that opens the payment app (or web fallback)</li>
+    </ul>
+    <p>Multiple methods of the same type (e.g. two Venmo accounts) are grouped together.</p>
 
     <!-- ══════════════════════════════════════════════════════ REPORTS -->
     <hr class="section-rule" />
@@ -659,7 +720,7 @@
     <h2 id="audit-log">Audit Log</h2>
     <p>
       Available to <span class="badge badge-admin">admin</span> and <span class="badge badge-super">super_admin</span>.
-      Navigate to <strong>Admin Tools → Audit Log</strong>.
+      Navigate to <strong>Management → Audit Log</strong>.
     </p>
     <p>
       Every state change performed by any admin is written to the <code>audit_log</code> table.
@@ -705,7 +766,7 @@
 
     <!-- ══════════════════════════════════════════════════════ LOGIN HISTORY -->
     <h2 id="login-history">Login History</h2>
-    <p>Navigate to your username dropdown → <strong>My Login History</strong>, or <strong>Admin Tools → Login History</strong> for the full admin view.</p>
+    <p>Navigate to your username dropdown → <strong>My Login History</strong> for your own logins. The full admin login history (admin+ roles) lives at <code>/admin/login-history</code> — it's still accessible but no longer in the Management dropdown menu as of v0.1.22.</p>
 
     <p>Each login entry captures:</p>
     <div class="table-wrap">
@@ -805,7 +866,7 @@ abc123  111111  00000000</code></pre>
     <h2 id="settings-system">System Settings</h2>
     <p>
       <span class="badge badge-super">super_admin</span> only.
-      Navigate to <strong>Admin Tools → Server Settings</strong>.
+      Navigate to <strong>Management → Server Settings</strong>.
       Each setting is stored as a key/value pair in the <code>system_settings</code> table, so changes persist across restarts.
     </p>
 

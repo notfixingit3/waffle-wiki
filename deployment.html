@@ -66,7 +66,7 @@
     <p>Create a <code>.env</code> file in the project root (copy from <code>.env.example</code>):</p>
 
     <pre><code># Docker image version — pin this for reproducible deploys
-WAFFLE_VERSION=v0.1.20
+WAFFLE_VERSION=v0.1.22
 
 # PostgreSQL connection string
 DATABASE_URL=postgres://syrup:your_secure_password@postgres:5432/syrup?sslmode=disable
@@ -84,7 +84,7 @@ ADMIN_PASSWORD=your-secure-admin-password
       <table>
         <thead><tr><th>Variable</th><th>Required</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><code>WAFFLE_VERSION</code></td><td>✅</td><td>Docker image tag to pull. Use a pinned stable version for production (e.g. <code>v0.1.20</code>). Use <code>latest</code> only if you want auto-tracking. For beta builds use the exact pre-release tag (e.g. <code>v0.1.22-beta.0</code>).</td></tr>
+          <tr><td><code>WAFFLE_VERSION</code></td><td>✅</td><td>Docker image tag to pull. Use a pinned stable version for production (e.g. <code>v0.1.22</code>). Use <code>latest</code> only if you want auto-tracking. For beta builds use the exact pre-release tag (e.g. <code>v0.1.23-beta.0</code>).</td></tr>
           <tr><td><code>DATABASE_URL</code></td><td>✅</td><td>Full PostgreSQL connection string including credentials, host, port, and database name.</td></tr>
           <tr><td><code>JWT_SECRET</code></td><td>✅</td><td>Random secret for signing admin session tokens. Minimum 32 characters. Changing this invalidates all active sessions.</td></tr>
           <tr><td><code>ADMIN_PASSWORD</code></td><td>✅</td><td>Password for the default <code>admin</code> account created on first run. Change immediately after first login.</td></tr>
@@ -183,8 +183,8 @@ fly deploy</code></pre>
       <div class="callout-title">ℹ️ Tag-driven release workflow (v0.1.19+)</div>
       The release type is now determined by the git tag format:
       <ul style="margin-top:6px">
-        <li><code>v*.*.*</code> (e.g. <code>v0.1.20</code>) — produces a <strong>stable</strong> GitHub Release and moves the <code>latest</code> and <code>major.minor</code> (e.g. <code>v0.1</code>) Docker image tags.</li>
-        <li><code>v*.*.*-*</code> (e.g. <code>v0.1.22-beta.0</code>, <code>v0.1.19-rc.1</code>) — produces a GitHub <strong>pre-release</strong> with only the versioned Docker tag. Does <strong>not</strong> move <code>latest</code>.</li>
+        <li><code>v*.*.*</code> (e.g. <code>v0.1.22</code>) — produces a <strong>stable</strong> GitHub Release and moves the <code>latest</code> and <code>major.minor</code> (e.g. <code>v0.1</code>) Docker image tags.</li>
+        <li><code>v*.*.*-*</code> (e.g. <code>v0.1.23-beta.0</code>, <code>v0.1.19-rc.1</code>) — produces a GitHub <strong>pre-release</strong> with only the versioned Docker tag. Does <strong>not</strong> move <code>latest</code>.</li>
       </ul>
       Old releases are never auto-deleted.
     </div>
@@ -195,7 +195,7 @@ fly deploy</code></pre>
         <tbody>
           <tr>
             <td><strong>Pinned stable</strong></td>
-            <td><code>v0.1.20</code></td>
+            <td><code>v0.1.22</code></td>
             <td>A specific stable release. <strong>Recommended for production.</strong> Fully reproducible.</td>
           </tr>
           <tr>
@@ -210,7 +210,7 @@ fly deploy</code></pre>
           </tr>
           <tr>
             <td><strong>Pinned pre-release</strong></td>
-            <td><code>v0.1.22-beta.0</code></td>
+            <td><code>v0.1.23-beta.0</code></td>
             <td>A specific beta/RC build. Use for <a href="beta-testers.html">beta testing</a> — not for production drops with real money.</td>
           </tr>
           <tr>
@@ -224,7 +224,7 @@ fly deploy</code></pre>
 
     <div class="callout tip">
       <div class="callout-title">💡 Pin in production</div>
-      Always pin to a specific stable version tag in production (e.g. <code>WAFFLE_VERSION=v0.1.20</code>).
+      Always pin to a specific stable version tag in production (e.g. <code>WAFFLE_VERSION=v0.1.22</code>).
       Using <code>latest</code> means a <code>docker compose pull</code> could silently update your app.
     </div>
 
@@ -346,7 +346,7 @@ docker compose exec -T postgres psql -U syrup syrup < backup-20260531.sql</code>
     <h2 id="updating">Updating to a New Release</h2>
     <ol class="steps">
       <li>
-        <strong>Update <code>WAFFLE_VERSION</code></strong> in your <code>.env</code> file to the new tag (e.g. <code>v0.1.18</code>).
+        <strong>Update <code>WAFFLE_VERSION</code></strong> in your <code>.env</code> file to the new tag (e.g. <code>v0.1.22</code>).
       </li>
       <li>
         <strong>Pull the new image and restart</strong>

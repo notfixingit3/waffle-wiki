@@ -111,8 +111,8 @@
   <aside class="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-section-title">Releases</div>
-      <a href="#v0.1.22-beta.0" class="sidebar-link">v0.1.22-beta.0 <span class="release-pill beta" style="font-size:.55rem;padding:1px 5px;margin-left:4px;">Beta</span></a>
-      <a href="#v0.1.21-beta.0" class="sidebar-link">v0.1.21-beta.0 <span class="release-pill beta" style="font-size:.55rem;padding:1px 5px;margin-left:4px;">Beta</span></a>
+      <a href="#v0.1.22" class="sidebar-link">v0.1.22</a>
+      <a href="#v0.1.21" class="sidebar-link">v0.1.21</a>
       <a href="#v0.1.20" class="sidebar-link">v0.1.20</a>
       <a href="#v0.1.19" class="sidebar-link">v0.1.19</a>
       <a href="#v0.1.18" class="sidebar-link">v0.1.18</a>
@@ -148,56 +148,68 @@
       <span><span class="release-pill beta">Beta</span> — pre-release, for testing only (see <a href="beta-testers.html">Beta Testers</a>)</span>
     </div>
 
-    <!-- v0.1.22-beta.0 -->
-    <div class="release" id="v0.1.22-beta.0">
+    <!-- v0.1.22 stable -->
+    <div class="release" id="v0.1.22">
       <div class="release-header">
-        <h2>v0.1.22-beta.0</h2>
-        <span class="release-pill beta">Beta</span>
-        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.22-beta.0" class="release-tag">v0.1.22-beta.0</a>
+        <h2>v0.1.22</h2>
+        <span class="release-pill stable">Stable</span>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.22" class="release-tag">v0.1.22</a>
         <span class="release-date">2026-06-10</span>
       </div>
       <div class="change-section">
         <div class="change-kind kind-added">Added</div>
         <ul class="change-list">
-          <li><strong>Live Stats Counter Updates</strong> — Manage page stats tiles (Available / Pending / Paid / Total) now update in real time as WebSocket spot events come in, without requiring a page reload.</li>
+          <li><strong>Stored Payment Methods</strong> — Structured pool of payment options (Venmo, PayPal, CashApp, Zelle) replaces the old free-text <code>payment_info</code> field. See <a href="admin-manual.html#payment-methods">Admin Manual → Payment Methods</a>.</li>
+          <li><strong>Payment Method Admin Page</strong> — <code>/admin/payment-methods</code> CRUD with soft-delete and usage warnings before deactivating an in-use method.</li>
+          <li><strong>Payment Method Public Display</strong> — Public waffle pages render selected payment methods grouped by type with icons and clickable links.</li>
+          <li><strong>Docker Version Auto-Detect</strong> — Build process extracts version from <code>main.go</code> when <code>VERSION=dev</code>, eliminating hardcoded version strings.</li>
+          <li><strong>Versioned Dev Docker Tags</strong> — Dev branch builds now publish both the floating <code>dev</code> tag and the detected app version (e.g. <code>v0.1.22-beta.3</code>) for safer beta pinning.</li>
         </ul>
       </div>
       <div class="change-section">
         <div class="change-kind kind-changed">Changed</div>
         <ul class="change-list">
-          <li><strong>Mutually-Exclusive Claim Controls</strong> — On the public waffle page, the random-claim count input is disabled while manual spots are selected and vice versa. Prevents confusing dual-submission attempts.</li>
+          <li><strong>Waffle Create/Edit Forms</strong> — <code>payment_info</code> textarea replaced with a multi-select checkbox list of stored payment methods. The old field is gone.</li>
+          <li><strong>Admin Navigation Rename</strong> — "Admin Tools" dropdown is now called <strong>"Management"</strong>. Payment Methods is the newest entry in the dropdown.</li>
+          <li><strong>Docker Image OCI Metadata</strong> — <code>org.opencontainers.image.version</code> now uses the detected app version instead of the branch name.</li>
+          <li><strong>Agent Guidance</strong> — Expanded Scooby-Doo commit-message style guide and added local Docker pre-flight testing reminders for future release bumps.</li>
         </ul>
       </div>
     </div>
     <hr class="divider" />
 
-    <!-- v0.1.21-beta.0 -->
-    <div class="release" id="v0.1.21-beta.0">
+    <!-- v0.1.21 stable -->
+    <div class="release" id="v0.1.21">
       <div class="release-header">
-        <h2>v0.1.21-beta.0</h2>
-        <span class="release-pill beta">Beta</span>
-        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.21-beta.0" class="release-tag">v0.1.21-beta.0</a>
+        <h2>v0.1.21</h2>
+        <span class="release-pill stable">Stable</span>
+        <a href="https://github.com/notfixingit3/waffle/releases/tag/v0.1.21" class="release-tag">v0.1.21</a>
         <span class="release-date">2026-06-10</span>
       </div>
+      <p style="font-size:.85rem; color:var(--text-muted); margin:6px 0 12px;">
+        Promoted from v0.1.21-beta.0 / v0.1.21-beta.1 with no additional changes.
+      </p>
       <div class="change-section">
         <div class="change-kind kind-added">Added</div>
         <ul class="change-list">
-          <li><strong>Random Spot Selection</strong> — Public waffle pages now include a "Pick Random Spots" flow so buyers can enter a spot count and let the app claim available spots for them automatically.</li>
+          <li><strong>Random Spot Selection</strong> — Public waffle pages include a "Pick Random Spots" flow so buyers can enter a spot count and let the app claim available spots for them automatically.</li>
           <li><strong>Random Claim API</strong> — New <code>POST /api/claims/random</code> endpoint reuses existing claim rate limiting, Instagram handle normalization, transactional row locking, and WebSocket spot updates.</li>
-          <li><strong>Partial Fulfillment</strong> — Random claims claim as many available spots as possible when the requested count is higher than remaining availability, then return both claimed and requested counts in the response.</li>
+          <li><strong>Partial Fulfillment</strong> — Random claims claim as many available spots as possible when the requested count exceeds availability, returning both claimed and requested counts in the response.</li>
         </ul>
       </div>
       <div class="change-section">
         <div class="change-kind kind-changed">Changed</div>
         <ul class="change-list">
+          <li><strong>Live Stats Updates</strong> — Available / Pending / Paid counts and the progress bar update in real-time as WebSocket spot events come in. No more page reloads to see current counts.</li>
+          <li><strong>Disable Random on Manual Selection</strong> — The "Pick Random Spots" button is disabled when manual spots are selected, preventing conflicting claim submissions.</li>
           <li><strong>Shared Handle Input</strong> — Random claims share the same Instagram handle input as manual spot selection while keeping the two claim actions independent.</li>
-          <li><strong>Feature Attribution</strong> — Random spot selection is credited as a community UI feature idea from <a href="https://www.instagram.com/orangesojuicy/" target="_blank" rel="noopener">@OrangeSoJuicy</a> on Instagram. Jinkies.</li>
+          <li><strong>Feature Attribution</strong> — Random spot selection credited as a community feature idea from <a href="https://www.instagram.com/orangesojuicy/" target="_blank" rel="noopener">@OrangeSoJuicy</a> on Instagram. Jinkies.</li>
         </ul>
       </div>
       <div class="change-section">
         <div class="change-kind kind-fixed">Fixed</div>
         <ul class="change-list">
-          <li><strong>No Hard Random Count Limit</strong> — Removed the client-side maximum count so the server-side partial-fulfillment behavior remains authoritative.</li>
+          <li><strong>No Hard Random Count Limit</strong> — Removed the client-side maximum count so server-side partial-fulfillment behavior remains authoritative.</li>
         </ul>
       </div>
     </div>

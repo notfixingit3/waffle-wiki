@@ -184,7 +184,7 @@
           <tr><td><strong>What you were doing</strong></td><td>Helps us reproduce it. "Tried to claim spots 4 and 7 as a buyer" beats "claim broke."</td></tr>
           <tr><td><strong>What you expected to happen</strong></td><td>Sometimes the behavior is intentional and the expectation is the actual bug to fix.</td></tr>
           <tr><td><strong>What actually happened</strong></td><td>Error message text, blank screens, wrong numbers — anything visible.</td></tr>
-          <tr><td><strong>Build version</strong></td><td>Look at the footer — it shows the version (e.g. <code>v0.1.22-beta.0</code>). Critical for knowing if a fix already shipped.</td></tr>
+          <tr><td><strong>Build version</strong></td><td>Look at the footer — it shows the version (e.g. <code>v0.1.22</code> for stable, <code>v0.1.23-beta.0</code> for a beta). Critical for knowing if a fix already shipped.</td></tr>
           <tr><td><strong>Browser / device</strong></td><td>"Instagram in-app on iPhone" vs "Chrome on a laptop" are basically different platforms.</td></tr>
           <tr><td><strong>Screenshot</strong> (if visual)</td><td>Worth a thousand words.</td></tr>
         </tbody>
@@ -237,7 +237,15 @@
     </div>
 
     <h2 id="current-beta">Current Beta Build</h2>
-    <p>The latest pre-release is <strong>v0.1.22-beta.0</strong> (June 10, 2026). There are two ways to test it:</p>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ As of right now: no pending beta</div>
+      <strong>v0.1.22</strong> just shipped stable (June 10, 2026), absorbing the entire v0.1.22-beta.0–beta.3 series. <code>main</code> and <code>dev</code> are at the same commit, so there's nothing pre-release-only to test against stable right this moment.
+      <br /><br />
+      The dev site stays up — please keep using it to gut-check regressions, file bugs you spot in v0.1.22 stable, and try out random spot selection / payment methods in the wild. As soon as a new feature lands on <code>dev</code> ahead of <code>main</code>, this section will name it.
+    </div>
+
+    <p>The latest stable is <strong>v0.1.22</strong> (June 10, 2026). There are two ways to test it:</p>
 
     <h3>🌐 Easiest: use the dev site</h3>
     <p>
@@ -255,16 +263,19 @@
 
     <h3>🐳 Self-hosted: pull the Docker image</h3>
     <p>If you want to run your own copy (great for poking at the admin/database side, or testing behind a real domain):</p>
-    <pre><code>WAFFLE_VERSION=v0.1.22-beta.0 docker compose -f docker-compose.prod.yml up -d</code></pre>
-    <p>See the <a href="getting-started.html">Getting Started</a> and <a href="deployment.html">Deployment</a> guides for the full setup.</p>
+    <pre><code>WAFFLE_VERSION=v0.1.22 docker compose -f docker-compose.prod.yml up -d</code></pre>
+    <p>See the <a href="getting-started.html">Getting Started</a> and <a href="deployment.html">Deployment</a> guides for the full setup. When a fresh beta tag drops (next would be <code>v0.1.23-beta.0</code>), pin to that instead.</p>
 
-    <h3>What to poke at specifically</h3>
+    <h3>What to poke at right now</h3>
+    <p>v0.1.22 is fresh — the things most worth stress-testing:</p>
     <ul>
+      <li><strong>Payment methods (NEW)</strong> — create a few entries under Management → Payment Methods, then select them on a waffle via the new multi-select checkboxes. Do the icons and links render correctly on the public page (especially inside the IG in-app browser)? Do soft-deleted methods disappear from new waffles while still rendering on old ones?</li>
+      <li><strong>Management dropdown rename</strong> — does anything in the wiki, screenshots, or your muscle memory still call it "Admin Tools"? Flag mismatches.</li>
       <li><strong>Random spot selection</strong> on the public waffle page — does the "Pick Random Spots" flow feel right? Edge cases when requested count exceeds available?</li>
       <li><strong>Live stats counter</strong> on the manage page — does the available/pending/paid count update smoothly when other people claim or pay?</li>
       <li><strong>Multiple winners</strong> on multi-item waffles — does the winner dropdown / selection feel reasonable when there are 3+ items?</li>
     </ul>
-    <p>See the <a href="changelog.html#v0.1.22-beta.0">changelog</a> for the full list of recent changes.</p>
+    <p>See the <a href="changelog.html#v0.1.22">v0.1.22 changelog</a> for the full list of recent changes.</p>
 
     <div class="callout warn">
       <div class="callout-title">⚠️ Beta means beta</div>

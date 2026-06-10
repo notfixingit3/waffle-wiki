@@ -40,6 +40,7 @@
       <a href="#admin-me" class="sidebar-link">Current Admin</a>
       <a href="#admin-waffles" class="sidebar-link">Waffles</a>
       <a href="#admin-spots" class="sidebar-link">Spots</a>
+      <a href="#admin-payment-methods" class="sidebar-link">Payment Methods</a>
       <a href="#admin-admins" class="sidebar-link">Admin Management</a>
       <a href="#admin-reports" class="sidebar-link">Reports</a>
       <a href="#admin-audit" class="sidebar-link">Audit Log</a>
@@ -234,7 +235,7 @@
   "description": "Limited drop",
   "total_spots": 50,
   "spot_price": 5,
-  "payment_info": "Venmo @myhandle",
+  "payment_methods": ["&lt;payment-method-uuid&gt;", "&lt;payment-method-uuid&gt;"],
   "item_count": 1,
   "image_url": "https://...",
   "instagram_media_links": ["https://www.instagram.com/p/..."]
@@ -297,6 +298,46 @@
     <div class="endpoint">
       <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/spots/:id/release</span></div>
       <div class="endpoint-desc">Release a pending or paid spot back to available. Broadcasts a WebSocket update.</div>
+    </div>
+
+    <!-- ══════════════════════════════ ADMIN PAYMENT METHODS -->
+    <h2 id="admin-payment-methods">Admin API — Payment Methods <span class="badge badge-admin" style="margin-left:8px;vertical-align:middle">v0.1.22</span></h2>
+    <p>
+      Stored payment method pool (Venmo, PayPal, CashApp, Zelle). Admin and super_admin can create, list, update, and soft-delete entries. Waffles reference payment methods by UUID via the <code>payment_methods</code> array on create/edit.
+    </p>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/payment-methods/</span></div>
+      <div class="endpoint-desc">List all payment methods (active and inactive). Returns an array of <code>PaymentMethod</code> objects with id, type, display_name, handle_or_url, and is_active.</div>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/payment-methods/</span></div>
+      <div class="endpoint-desc">
+        Create a new payment method.
+        <pre><code>{
+  "type": "venmo",
+  "display_name": "Venmo — @notfixingit",
+  "handle_or_url": "@notfixingit"
+}</code></pre>
+        Valid <code>type</code> values: <code>venmo</code>, <code>paypal</code>, <code>cashapp</code>, <code>zelle</code>. <code>handle_or_url</code> can be a raw handle (the public page will format the link based on type) or a full URL. New methods are <code>is_active: true</code> by default.
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-patch">PATCH</span> <span class="endpoint-path">/api/admin/payment-methods/:id</span></div>
+      <div class="endpoint-desc">
+        Update a payment method's display name, handle, or active status.
+        <pre><code>{ "display_name": "Venmo — Primary", "handle_or_url": "@notfixingit", "is_active": true }</code></pre>
+        All fields are optional — only the ones present are updated. Changes propagate to every waffle that references this method.
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-delete">DELETE</span> <span class="endpoint-path">/api/admin/payment-methods/:id</span></div>
+      <div class="endpoint-desc">
+        Soft-delete a payment method (sets <code>is_active = false</code>). The record is preserved so historical waffles still resolve. The method no longer appears in the multi-select on new or edited waffles. To reactivate, <code>PATCH</code> with <code>{"is_active": true}</code>.
+      </div>
     </div>
 
     <!-- ══════════════════════════════ ADMIN ADMINS -->
