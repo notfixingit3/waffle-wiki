@@ -26,7 +26,22 @@
     <a href="beta-testers.html">Beta Testers</a>
     <a href="changelog.html">Changelog</a>
   </nav>
+  <button class="hamburger" id="hamburger-btn" aria-label="Open navigation menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </header>
+<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
+  <a href="index.html">Home</a>
+  <a href="getting-started.html">Getting Started</a>
+  <a href="admin-manual.html">Admin Manual</a>
+  <a href="deployment.html">Deployment</a>
+  <a href="api-reference.html">API Reference</a>
+  <a href="beta-testers.html">Beta Testers</a>
+  <a href="changelog.html">Changelog</a>
+</nav>
+<script>
+(function(){var b=document.getElementById('hamburger-btn'),n=document.getElementById('mobile-nav');b.addEventListener('click',function(){var o=n.classList.toggle('open');b.classList.toggle('open',o);b.setAttribute('aria-expanded',o);});var p=window.location.pathname.split('/').pop()||'index.html';n.querySelectorAll('a').forEach(function(a){if(a.getAttribute('href')===p)a.classList.add('active');});})();
+</script>
 
 <div class="layout">
   <aside class="sidebar">
