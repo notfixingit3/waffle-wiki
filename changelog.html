@@ -126,6 +126,7 @@
   <aside class="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-section-title">Releases</div>
+      <a href="#v0.1.23" class="sidebar-link">v0.1.23-beta</a>
       <a href="#v0.1.22" class="sidebar-link">v0.1.22</a>
       <a href="#v0.1.21" class="sidebar-link">v0.1.21</a>
       <a href="#v0.1.20" class="sidebar-link">v0.1.20</a>
@@ -162,6 +163,41 @@
       <span><span class="release-pill stable">Stable</span> — production-ready, recommended for live drops</span>
       <span><span class="release-pill beta">Beta</span> — pre-release, for testing only (see <a href="beta-testers.html">Beta Testers</a>)</span>
     </div>
+
+    <!-- v0.1.23 beta -->
+    <div class="release" id="v0.1.23">
+      <div class="release-header">
+        <h2>v0.1.23-beta.1</h2>
+        <span class="release-pill beta">Beta</span>
+        <a href="https://github.com/notfixingit3/waffle/tree/dev" class="release-tag">dev</a>
+        <span class="release-date">2026-06-12</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-fixed">Fixed</div>
+        <ul class="change-list">
+          <li><strong>Admin Archive / Unarchive / Delete</strong> — Dashboard form posts to <code>/admin/waffles/:id/archive</code>, <code>/admin/waffles/:id/unarchive</code>, and <code>/admin/waffles/:id/delete</code> were returning 404. Routes are now registered and protected with CSRF checks.</li>
+          <li><strong>Gin Route Parameter Conflict</strong> — A naming mismatch between sibling route parameters caused the app to panic on startup. Route parameter names unified to <code>:id</code> throughout the waffle management group.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="release">
+      <div class="release-header">
+        <h2>v0.1.23-beta.0</h2>
+        <span class="release-pill beta">Beta</span>
+        <a href="https://github.com/notfixingit3/waffle/tree/dev" class="release-tag">dev</a>
+        <span class="release-date">2026-06-12</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Shareable Buyer Card</strong> — <code>GET /buyer/:handle/card</code> renders a chromeless, mobile-optimized stat card for any buyer. Shows wins, losses, spots claimed, win rate, a luck rating (actual win rate minus statistically expected win rate based on spots held in completed waffles), and a trophy case (items won, parsed from quoted text in waffle titles). Includes Open Graph and Twitter Card meta tags so the card previews cleanly when shared to Instagram or other social platforms.</li>
+          <li><strong>Buyer Card JSON API</strong> — <code>GET /api/buyers/:handle/card</code> returns all computed card data as JSON, including <code>win_rate</code>, <code>expected_win_rate</code>, <code>luck_rating</code>, and <code>trophies</code> array.</li>
+          <li><strong>Buyer Stats Page Redesign</strong> — <code>/buyer/:handle</code> now includes card data (luck rating, trophy case) alongside the existing win/loss history.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="divider" />
 
     <!-- v0.1.22 stable -->
     <div class="release" id="v0.1.22">

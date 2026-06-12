@@ -100,7 +100,13 @@
     </div>
     <div class="endpoint">
       <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/buyer/:handle</span></div>
-      <div class="endpoint-desc">Public buyer stats page showing win/loss history for an Instagram handle.</div>
+      <div class="endpoint-desc">Public buyer stats page showing win/loss history, luck rating, and trophy case for an Instagram handle.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/buyer/:handle/card</span></div>
+      <div class="endpoint-desc">
+        <strong>Added in v0.1.23-beta.0.</strong> Chromeless, shareable buyer stat card — optimized for screenshot and social sharing. Shows wins, losses, spots claimed, win rate, luck rating (actual vs. statistically expected win rate), and trophy case. Includes Open Graph / Twitter Card meta tags so the URL previews inline when posted to Instagram or other platforms.
+      </div>
     </div>
     <div class="endpoint">
       <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/about</span></div>
@@ -175,6 +181,23 @@
     <div class="endpoint">
       <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/buyers/:handle/history</span></div>
       <div class="endpoint-desc">Full claim history for an Instagram handle across all waffles.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/buyers/:handle/card</span></div>
+      <div class="endpoint-desc">
+        <strong>Added in v0.1.23-beta.0.</strong> Returns all computed buyer card data as JSON. Always returns 200 — unknown handles return zeroed stats rather than 404.
+        <pre><code>{
+  "instagram_handle": "dani_boo_glass",
+  "stats": { "total_wins": 3, "total_losses": 12, "total_spots_claimed": 47, ... },
+  "win_rate": 0.0638,
+  "expected_win_rate": 0.0421,
+  "luck_rating": 0.0217,
+  "trophies": ["Stanley Cup", "Mystery Box"],
+  "waffle_history": [...]
+}</code></pre>
+        <p><code>luck_rating</code> = actual win rate minus statistically expected win rate over completed waffles. Positive = luckier than expected; negative = unluckier.</p>
+        <p><code>trophies</code> are item names extracted from double-quoted text in waffle titles (e.g. a title of <code>Waffle — "Stanley Cup"</code> yields <code>"Stanley Cup"</code>).</p>
+      </div>
     </div>
 
     <!-- ══════════════════════════════ ADMIN AUTH -->
