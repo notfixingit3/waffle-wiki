@@ -54,6 +54,7 @@
       <a href="#admin-auth" class="sidebar-link">Auth</a>
       <a href="#admin-me" class="sidebar-link">Current Admin</a>
       <a href="#admin-waffles" class="sidebar-link">Waffles</a>
+      <a href="#admin-share-templates" class="sidebar-link sub">Share Templates</a>
       <a href="#admin-spots" class="sidebar-link">Spots</a>
       <a href="#admin-payment-methods" class="sidebar-link">Payment Methods</a>
       <a href="#admin-admins" class="sidebar-link">Admin Management</a>
@@ -106,6 +107,17 @@
       <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/buyer/:handle/card</span></div>
       <div class="endpoint-desc">
         <strong>Added in v0.1.23-beta.0.</strong> Chromeless, shareable buyer stat card — optimized for screenshot and social sharing. Shows wins, losses, spots claimed, win rate, luck rating (actual vs. statistically expected win rate), and trophy case. Includes Open Graph / Twitter Card meta tags so the URL previews inline when posted to Instagram or other platforms.
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/waffle/:slug/card.png</span></div>
+      <div class="endpoint-desc">
+        <strong>Added in v0.1.23-beta.3.</strong> Downloadable PNG share card for a waffle. Rate-limited. Accepts a <code>?format=</code> query parameter:
+        <ul>
+          <li><code>story</code> (default) — 1080×1920 vertical, ideal for Instagram Stories</li>
+          <li><code>square</code> — 1080×1080, ideal for feed posts</li>
+        </ul>
+        Card shows the waffle title, spot price, spots remaining, and the public claim URL. Generated with Inter font and Project Syrup branding; cached on disk per slug+format (invalidated by the regenerate endpoint). Returns <code>Content-Type: image/png</code> with <code>Cache-Control: public, max-age=3600</code>. Returns 404 for archived waffles. No auth required.
       </div>
     </div>
     <div class="endpoint">
@@ -197,6 +209,17 @@
 }</code></pre>
         <p><code>luck_rating</code> = actual win rate minus statistically expected win rate over completed waffles. Positive = luckier than expected; negative = unluckier.</p>
         <p><code>trophies</code> are item names extracted from double-quoted text in waffle titles (e.g. a title of <code>Waffle — "Stanley Cup"</code> yields <code>"Stanley Cup"</code>).</p>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ PUBLIC MISC -->
+    <h2 id="public-misc">Public API — Misc</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/version</span></div>
+      <div class="endpoint-desc">
+        <strong>Added in v0.1.23-beta.2.</strong> Returns the running app version. No authentication required.
+        <pre><code>{ "version": "v0.1.23-beta.3" }</code></pre>
       </div>
     </div>
 
@@ -324,6 +347,55 @@
 { "winning_spot_numbers": [23, 31, 44] }</code></pre>
         Old winning spots not in the new selection revert to <em>paid</em>; new selections become <em>winner</em>; loser status is recomputed across all paid spots. Recalculates buyer stats. Fires a <code>winner_changed</code> WebSocket broadcast.
       </div>
+    </div>
+
+    <!-- Share message sub-endpoints -->
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/waffles/:id/share-message</span></div>
+      <div class="endpoint-desc"><strong>Added in v0.1.23-beta.3.</strong> Get the current share message and template selection for a waffle.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-patch">PATCH</span> <span class="endpoint-path">/api/admin/waffles/:id/share-message</span></div>
+      <div class="endpoint-desc">
+        <strong>Added in v0.1.23-beta.3.</strong> Save a share message for a waffle. Both fields required together.
+        <pre><code>{ "template_id": "&lt;uuid&gt;", "message": "Grab your spots! 🧇\n{url}" }</code></pre>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/waffles/:id/share-message/render</span></div>
+      <div class="endpoint-desc"><strong>Added in v0.1.23-beta.3.</strong> Render a template body with waffle data substituted. Returns the expanded message string for preview.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/waffles/:id/share-message/regenerate-card</span></div>
+      <div class="endpoint-desc"><strong>Added in v0.1.23-beta.3.</strong> Invalidate the cached PNG for this waffle (both story and square formats). The next request to <code>/waffle/:slug/card.png</code> will regenerate it.</div>
+    </div>
+
+    <!-- ══════════════════════════════ ADMIN SHARE TEMPLATES -->
+    <h2 id="admin-share-templates">Admin API — Share Templates <span class="badge badge-admin" style="margin-left:8px;vertical-align:middle">v0.1.23-beta</span></h2>
+    <p>Share message templates are reusable caption bodies. Requires <span class="badge badge-wm">waffle_manager</span> or higher. Supports placeholders: <code>{title}</code>, <code>{price}</code>, <code>{spots}</code>, <code>{url}</code>.</p>
+
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-get">GET</span> <span class="endpoint-path">/api/admin/share-templates/</span></div>
+      <div class="endpoint-desc">List all message templates. Returns <code>{"templates": [...]}</code>.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/share-templates/</span></div>
+      <div class="endpoint-desc">
+        Create a new template.
+        <pre><code>{ "name": "Standard Drop", "body": "Spots open! 🧇\nLink: {url}" }</code></pre>
+      </div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-patch">PATCH</span> <span class="endpoint-path">/api/admin/share-templates/:id</span></div>
+      <div class="endpoint-desc">Update a template's name or body. Same payload shape as POST.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-delete">DELETE</span> <span class="endpoint-path">/api/admin/share-templates/:id</span></div>
+      <div class="endpoint-desc">Delete a template.</div>
+    </div>
+    <div class="endpoint">
+      <div class="endpoint-head"><span class="badge badge-post">POST</span> <span class="endpoint-path">/api/admin/share-templates/:id/default</span></div>
+      <div class="endpoint-desc">Set this template as the default. The default is pre-selected in the share message editor on the waffle manage page.</div>
     </div>
 
     <!-- ══════════════════════════════ ADMIN SPOTS -->

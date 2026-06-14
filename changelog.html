@@ -167,6 +167,47 @@
     <!-- v0.1.23 beta -->
     <div class="release" id="v0.1.23">
       <div class="release-header">
+        <h2>v0.1.23-beta.3</h2>
+        <span class="release-pill beta">Beta</span>
+        <a href="https://github.com/notfixingit3/waffle/tree/dev" class="release-tag">dev</a>
+        <span class="release-date">2026-06-14</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Share to Instagram — Waffle Card PNG</strong> — <code>GET /waffle/:slug/card.png</code> generates a downloadable PNG share card for any active waffle. Two formats via <code>?format=</code>: <code>story</code> (default, 1080×1920 vertical) or <code>square</code> (1080×1080). Cards show the waffle title, spot price, spots remaining, and the claim URL. Generated with <a href="https://github.com/fogleman/gg" target="_blank" rel="noopener">fogleman/gg</a> using embedded Inter font and Project Syrup branding; cached on disk per slug+format, rate-limited.</li>
+          <li><strong>Share Message Templates</strong> — Admins and waffle managers can create and manage reusable caption templates under <strong>Management → Share Templates</strong>. Templates support placeholders (<code>{title}</code>, <code>{price}</code>, <code>{spots}</code>, <code>{url}</code>, etc.). One template can be set as the default.</li>
+          <li><strong>Per-Waffle Share Message Editor</strong> — The admin waffle manage page now includes a <em>Share to Instagram</em> section: choose a template, edit the rendered caption, copy the claim URL, pick Story or Square format, download the card PNG, or regenerate the cached card.</li>
+          <li><strong>Share Message Regenerate Endpoint</strong> — <code>POST /api/admin/waffles/:id/share-message/regenerate-card</code> invalidates the disk cache and forces a fresh card render on next request.</li>
+        </ul>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-fixed">Fixed</div>
+        <ul class="change-list">
+          <li><strong>Archived Waffles Return 404 Publicly</strong> — <code>GET /waffle/:slug</code> and <code>GET /api/waffles/:slug</code> now return 404 for archived waffles instead of leaking data through public endpoints.</li>
+          <li><strong>Share card cache invalidation</strong> — Updating a share message or template now correctly invalidates the associated cached PNG.</li>
+          <li><strong>CSRF on Admin Base Template</strong> — CSRF meta tag added to the admin base layout to ensure share-message JS requests carry the token correctly.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="release">
+      <div class="release-header">
+        <h2>v0.1.23-beta.2</h2>
+        <span class="release-pill beta">Beta</span>
+        <a href="https://github.com/notfixingit3/waffle/tree/dev" class="release-tag">dev</a>
+        <span class="release-date">2026-06-12</span>
+      </div>
+      <div class="change-section">
+        <div class="change-kind kind-added">Added</div>
+        <ul class="change-list">
+          <li><strong>Public Version Endpoint</strong> — <code>GET /api/version</code> returns the running app version as JSON (<code>{"version":"v0.1.23-beta.2"}</code>). No authentication required.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="release">
+      <div class="release-header">
         <h2>v0.1.23-beta.1</h2>
         <span class="release-pill beta">Beta</span>
         <a href="https://github.com/notfixingit3/waffle/tree/dev" class="release-tag">dev</a>
@@ -175,8 +216,8 @@
       <div class="change-section">
         <div class="change-kind kind-fixed">Fixed</div>
         <ul class="change-list">
-          <li><strong>Admin Archive / Unarchive / Delete</strong> — Dashboard form posts to <code>/admin/waffles/:id/archive</code>, <code>/admin/waffles/:id/unarchive</code>, and <code>/admin/waffles/:id/delete</code> were returning 404. Routes are now registered and protected with CSRF checks.</li>
-          <li><strong>Gin Route Parameter Conflict</strong> — A naming mismatch between sibling route parameters caused the app to panic on startup. Route parameter names unified to <code>:id</code> throughout the waffle management group.</li>
+          <li><strong>Admin Archive / Unarchive / Delete</strong> — Form posts to <code>/admin/waffles/:id/archive</code>, <code>/admin/waffles/:id/unarchive</code>, and <code>/admin/waffles/:id/delete</code> were returning 404. Routes are now registered and CSRF-protected.</li>
+          <li><strong>Gin Route Parameter Conflict</strong> — Parameter name mismatch between sibling routes caused the app to panic on startup. Route parameter names unified to <code>:id</code> throughout the waffle management group.</li>
         </ul>
       </div>
     </div>
@@ -191,9 +232,9 @@
       <div class="change-section">
         <div class="change-kind kind-added">Added</div>
         <ul class="change-list">
-          <li><strong>Shareable Buyer Card</strong> — <code>GET /buyer/:handle/card</code> renders a chromeless, mobile-optimized stat card for any buyer. Shows wins, losses, spots claimed, win rate, a luck rating (actual win rate minus statistically expected win rate based on spots held in completed waffles), and a trophy case (items won, parsed from quoted text in waffle titles). Includes Open Graph and Twitter Card meta tags so the card previews cleanly when shared to Instagram or other social platforms.</li>
-          <li><strong>Buyer Card JSON API</strong> — <code>GET /api/buyers/:handle/card</code> returns all computed card data as JSON, including <code>win_rate</code>, <code>expected_win_rate</code>, <code>luck_rating</code>, and <code>trophies</code> array.</li>
-          <li><strong>Buyer Stats Page Redesign</strong> — <code>/buyer/:handle</code> now includes card data (luck rating, trophy case) alongside the existing win/loss history.</li>
+          <li><strong>Shareable Buyer Card</strong> — <code>GET /buyer/:handle/card</code> renders a chromeless, mobile-optimized stat card. Shows wins, losses, spots claimed, win rate, luck rating (actual vs. statistically expected), and trophy case (items won, parsed from quoted text in waffle titles). Open Graph and Twitter Card meta tags make the URL preview inline when shared.</li>
+          <li><strong>Buyer Card JSON API</strong> — <code>GET /api/buyers/:handle/card</code> returns all computed card data as JSON.</li>
+          <li><strong>Buyer Stats Page Redesign</strong> — <code>/buyer/:handle</code> now shows luck rating and trophy case alongside win/loss history.</li>
         </ul>
       </div>
     </div>
